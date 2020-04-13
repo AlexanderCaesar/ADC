@@ -15,6 +15,7 @@
     <ClCompile Include="..\..\..\..\..\source\common\common.cpp" />
     <ClCompile Include="..\..\..\..\..\source\common\log.cpp" />
     <ClCompile Include="..\..\..\..\..\source\enc\adce.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\enc\encoder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\source\common\adc.h" />

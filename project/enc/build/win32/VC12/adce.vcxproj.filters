@@ -21,6 +21,9 @@
     <ClCompile Include="..\..\..\..\..\source\common\adc_config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\source\enc\encoder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\source\common\log.h">

@@ -16,6 +16,12 @@
 extern "C" {
 #endif
 
+/* Supported internal color space types (according to semantics of chroma_format_idc) */
+#define X265_CSP_I400           0  /* yuv 4:0:0 planar */
+#define X265_CSP_I420           1  /* yuv 4:2:0 planar */
+#define X265_CSP_I422           2  /* yuv 4:2:2 planar */
+#define X265_CSP_I444           3  /* yuv 4:4:4 planar */
+#define X265_CSP_COUNT          4  /* Number of supported internal color spaces */
 
 /* Output statistics from encoder */
 typedef struct adc_stats
@@ -66,7 +72,12 @@ typedef struct adc_param
     /* Enable the output the reconstruction frames. Default is disabled */
     int       bRec;
 
+    int       chromaFormat;    
+
 } adc_param;
+
+
+int open_encoder(adc_param *adc_p);
 
 
 #define ADC_BUILD 003

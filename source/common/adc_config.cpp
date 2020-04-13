@@ -14,7 +14,14 @@
 ADCConfig adcconfig;
 ADCConfig::ADCConfig()
 {
-
+    adc_p.bEnablePsnr = 1;
+    adc_p.bEnableSsim = 0;
+    adc_p.bRec = 0;
+    adc_p.et = 0;
+    adc_p.fpsNum = 25;
+    adc_p.logLevel = 4;
+    adc_p.totalFrames = 0;
+    adc_p.chromaFormat = 1;
 }
 
 int ADCConfig::parse_arg(int argc, char* argv[])

@@ -19,8 +19,14 @@ int main(int argc, char *argv[])
 {
     adcconfig.parse_arg(argc, argv);
 
-    LogSetLevel(LOG_LEVEL_USER);
-    LogSetCallback(NULL, "inc.log", "stat.log");
+    LogSetLevel(LogLevel(adcconfig.adc_p.logLevel));
+    LogSetCallback(NULL, "inf.log", "stat.log");
+
+    if (open_encoder(&adcconfig.adc_p))
+    {
+        ERR("open encoder failed.");
+        return 0;
+    }
     USE("codestram");
     return 0;
 }
