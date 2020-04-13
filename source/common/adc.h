@@ -77,7 +77,10 @@ typedef struct adc_param
 } adc_param;
 
 
-int open_encoder(adc_param *adc_p);
+typedef struct adc_encoder adc_encoder;
+
+adc_encoder *adc_encoder_open(adc_param *p);
+void adc_encoder_close(adc_encoder* encoder);
 
 
 #define ADC_BUILD 003

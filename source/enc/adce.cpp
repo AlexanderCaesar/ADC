@@ -22,11 +22,15 @@ int main(int argc, char *argv[])
     LogSetLevel(LogLevel(adcconfig.adc_p.logLevel));
     LogSetCallback(NULL, "inf.log", "stat.log");
 
-    if (open_encoder(&adcconfig.adc_p))
+    adc_encoder *encoder = adc_encoder_open(&adcconfig.adc_p);
+
+    if (!encoder)
     {
         ERR("open encoder failed.");
         return 0;
     }
     USE("codestram");
+
+    adc_encoder_close(encoder);
     return 0;
 }

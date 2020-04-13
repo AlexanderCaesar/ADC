@@ -12,8 +12,13 @@
 #include"log.h"
 #include"adc.h"
 
-int open_encoder(adc_param *adc_p)
+adc_encoder *adc_encoder_open(adc_param *p)
 {
-    return 0;
+    return NULL;
+}
+
+void adc_encoder_close(adc_encoder* encoder)
+{
+
 }
 
