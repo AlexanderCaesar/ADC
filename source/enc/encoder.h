@@ -11,6 +11,9 @@
 
 #include"log.h"
 #include"adc.h"
+#include"nal.h"
+
+#pragma once
 
 struct adc_encoder {};
 
@@ -20,6 +23,7 @@ public:
 
     int                m_poc; 
     adc_param          m_param;
+    NALList            m_nalList;
 
     Encoder();
     ~Encoder()

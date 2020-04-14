@@ -53,6 +53,17 @@ void adc_encoder_close(adc_encoder* enc)
     }
 }
 
+int adc_encoder_headers(adc_encoder *enc, adc_nal *pp_nal, uint32_t *pi_nal)
+{
+    if (pp_nal && enc)
+    {
+        Encoder *encoder = static_cast<Encoder*>(enc);
+
+        return 0;
+    }
+    return -1;
+}
+
 Encoder::Encoder()
 {
     m_poc = -1;

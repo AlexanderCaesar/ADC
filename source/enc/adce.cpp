@@ -32,7 +32,17 @@ int main(int argc, char *argv[])
         ERR("open encoder failed.");
         return 0;
     }
-    USE("codestram");
+    
+    adc_nal  p_nal;
+    uint32_t nal;
+
+    if (adc_encoder_headers(encoder, &p_nal, &nal) < 0)
+    {
+        ERR("Failure generating stream headers\n");
+        return 0;
+    }
+    else
+        ;//totalbytes += cliopt.output->writeHeaders(p_nal, nal);
 
     adc_encoder_close(encoder);
     return 0;

@@ -23,6 +23,20 @@ extern "C" {
 #define X265_CSP_I444           3  /* yuv 4:4:4 planar */
 #define X265_CSP_COUNT          4  /* Number of supported internal color spaces */
 
+#define MAX_NAL_UNITS          16
+
+/* The data within the payload is already NAL-encapsulated; the type is merely
+ * in the struct for easy access by the calling application.  All data returned
+ * in an adc_nal, including the data in payload, is no longer valid after the
+ * next call to adc_encoder_encode.  Thus it must be used or copied before
+ * calling adc_encoder_encode again. */
+typedef struct adc_nal
+{
+    uint32_t type;        /* NalUnitType */
+    uint32_t sizeBytes;   /* size in bytes */
+    uint8_t* payload;
+} adc_nal;
+
 /* Output statistics from encoder */
 typedef struct adc_stats
 {
@@ -80,12 +94,13 @@ typedef struct adc_param
 typedef struct adc_encoder adc_encoder;
 
 adc_encoder *adc_encoder_open(adc_param *p);
-void adc_encoder_close(adc_encoder* enc);
+void        adc_encoder_close(adc_encoder* enc);
+int         adc_encoder_headers(adc_encoder *enc, adc_nal *pp_nal, uint32_t *pi_nal);
 
 /*adc decoder*/
 
 
-#define ADC_BUILD 005
+#define ADC_BUILD 006
 
 #ifdef __cplusplus
 }
