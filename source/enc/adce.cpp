@@ -11,23 +11,11 @@
 #include"log.h"
 #include"adc.h"
 #include "adc_config.h"
+#include "files.h"
 
 #include<stdio.h>
 #include<stdlib.h>
 
-int writeHeaders(const adc_nal* nal, uint32_t nalcount)
-{
-    uint32_t bytes = 0;
-
-    for (uint32_t i = 0; i < nalcount; i++)
-    {
-        fwrite((const void*)nal->payload, 1, nal->sizeBytes, ofs);
-        bytes += nal->sizeBytes;
-        nal++;
-    }
-
-    return bytes;
-}
 
 int main(int argc, char *argv[])
 {
@@ -50,6 +38,14 @@ int main(int argc, char *argv[])
     adc_nal* p_nal;
     uint32_t nal;
 
+    Files files;
+
+    if (files.openfile(adcconfig))
+    {
+        ERR("Failure open files\n");
+        return 0;
+    }
+
     if (adc_encoder_headers(encoder, &p_nal, &nal) < 0)
     {
         ERR("Failure generating stream headers\n");
@@ -59,5 +55,7 @@ int main(int argc, char *argv[])
         ;//totalbytes += cliopt.output->writeHeaders(p_nal, nal);
 
     adc_encoder_close(encoder);
+
+    files.closefile();
     return 0;
 }

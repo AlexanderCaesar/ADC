@@ -24,7 +24,7 @@ adc_encoder *adc_encoder_open(adc_param *p)
 
     encoder->create();
 
-    INF("ADC encoder version %d", ADC_BUILD);
+    INF("ADC encoder version %s", ADC_BUILD);
     INF("\n\
         psnr  %3d ssim   %3d    loglevel    %3d rec %2d \n\
         width %3d height %3d    totalframes %3d fps %2d\n\
@@ -75,6 +75,17 @@ int adc_encoder_headers(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal)
 Encoder::Encoder()
 {
     m_poc = -1;
+    m_stats.globalPsnrY = 0;
+    m_stats.globalPsnrU = 0;
+    m_stats.globalPsnrV = 0;
+    m_stats.globalPsnr = 0;
+    m_stats.globalSsim = 0;
+    m_stats.elapsedEncodeTime = 0;
+    m_stats.elapsedVideoTime = 0;
+    m_stats.bitrate = 0;
+    m_stats.accBits = 0;
+    m_stats.encodedPictureCount = 0;
+
 }
 
 void Encoder::create()
@@ -99,6 +110,10 @@ void Encoder::getStreamHeaders(NALList& list, Entropy& entropy, Bitstream& bs)
     bs.writeByteAlignment();
     list.serialize(NAL_VPS, bs);
 
+    for (uint32_t i = 0; i < list.m_numNal; i++)
+    {
+        m_stats.accBits += list.m_nal[i].sizeBytes<<3;//*8
+    }
 }
 int Encoder::encode()
 {

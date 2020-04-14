@@ -25,6 +25,7 @@ public:
     int                m_poc; 
     adc_param          m_param;
     NALList            m_nalList;
+    adc_stats          m_stats;
 
     Encoder();
     ~Encoder()

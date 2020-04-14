@@ -106,7 +106,7 @@ int         adc_encoder_headers(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi
 /*adc decoder*/
 
 
-#define ADC_BUILD 007
+#define ADC_BUILD "0.0.8"
 
 #ifdef __cplusplus
 }

@@ -55,7 +55,7 @@ int ADCConfig::parse_arg(int argc, char* argv[])
         switch (opt)
         {
         case 'v':
-            printf("version %d\n", ADC_BUILD);
+            printf("version %s\n", ADC_BUILD);
             return 1;
         case 'h':
             display_help();

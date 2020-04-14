@@ -17,4 +17,5 @@
 *.exp
 *.ilk
 *.o.d
+*.yuv
 
