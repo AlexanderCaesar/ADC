@@ -22,6 +22,7 @@ ADCConfig::ADCConfig()
     adc_p.logLevel = 3;
     adc_p.totalFrames = 0;
     adc_p.chromaFormat = 1;
+    log_file = "adc.log";
 }
 
 int ADCConfig::parse_arg(int argc, char* argv[])
@@ -40,12 +41,13 @@ int ADCConfig::parse_arg(int argc, char* argv[])
         { "height", required_argument, NULL, 'H' },
         { "totalframes", required_argument, NULL, 't' },
         { "et", required_argument, NULL, 'e' },
+        { "logfile", required_argument, NULL, 'g' },
         { 0, 0, 0, 0 }
     };
 
     int opt;
     int option_index = 0;
-    char* optstring = "hl:v:h:i:o:R:l:P:S:f:W:H:t:e:"; //There must be an ":" in the end of string
+    char* optstring = "hl:v:h:i:o:R:l:P:S:f:W:H:t:e:g:"; //There must be an ":" in the end of string
     std::string temp;
 
     while ((opt = getopt_long(argc, argv, optstring, long_options, &option_index)) != -1)
@@ -102,6 +104,10 @@ int ADCConfig::parse_arg(int argc, char* argv[])
         case 'e':
             adc_p.et = atoi(optarg);
             break;
+
+        case 'g':
+            log_file = optarg;
+            break;
         }
     }
 
@@ -123,5 +129,6 @@ void ADCConfig::display_help()
     printf("  -W, --width <width> Width (in pixels) of the source pictures.\n");
     printf("  -H, --height <height> Height (in pixels) of the source pictures.\n");
     printf("  -t, --totalframes <totalframes> Total Number of frames to be encoded\n");
-    printf("  -e, --et <token> Error tolerance 0~255\n");
+    printf("  -e, --et <et> Error tolerance 0~255\n");
+    printf("  -g, --logfile <logfile > logfile\n");
 }

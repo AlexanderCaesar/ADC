@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     }
 
     LogSetLevel(LogLevel(adcconfig.adc_p.logLevel));
-    LogSetCallback(NULL, "inf.log", NULL);
+    LogSetCallback(NULL, adcconfig.log_file.c_str(), NULL);
 
     adc_encoder *encoder = adc_encoder_open(&adcconfig.adc_p);
 

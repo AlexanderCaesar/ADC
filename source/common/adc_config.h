@@ -24,6 +24,7 @@ public:
     std::string input_file;
     std::string output_file;
     std::string rec_file;
+    std::string log_file;
 
     adc_param   adc_p;
 

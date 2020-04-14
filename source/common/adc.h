@@ -85,7 +85,7 @@ void adc_encoder_close(adc_encoder* enc);
 /*adc decoder*/
 
 
-#define ADC_BUILD 004
+#define ADC_BUILD 005
 
 #ifdef __cplusplus
 }
