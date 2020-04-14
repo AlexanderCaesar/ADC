@@ -22,6 +22,7 @@
     <ClInclude Include="..\..\..\..\..\source\common\adc_config.h" />
     <ClInclude Include="..\..\..\..\..\source\common\common.h" />
     <ClInclude Include="..\..\..\..\..\source\common\log.h" />
+    <ClInclude Include="..\..\..\..\..\source\enc\encoder.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\third_party\getopt\build\win32\VC12\getopt.vcxproj">

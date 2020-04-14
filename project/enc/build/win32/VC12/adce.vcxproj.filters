@@ -38,5 +38,8 @@
     <ClInclude Include="..\..\..\..\..\source\common\adc_config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\..\source\enc\encoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

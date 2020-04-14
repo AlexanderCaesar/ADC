@@ -17,10 +17,13 @@
 
 int main(int argc, char *argv[])
 {
-    adcconfig.parse_arg(argc, argv);
+    if (adcconfig.parse_arg(argc, argv))
+    {
+        return 0;
+    }
 
     LogSetLevel(LogLevel(adcconfig.adc_p.logLevel));
-    LogSetCallback(NULL, "inf.log", "stat.log");
+    LogSetCallback(NULL, "inf.log", NULL);
 
     adc_encoder *encoder = adc_encoder_open(&adcconfig.adc_p);
 
