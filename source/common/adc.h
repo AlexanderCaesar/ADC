@@ -25,6 +25,12 @@ extern "C" {
 
 #define MAX_NAL_UNITS          16
 
+typedef enum
+{
+    NAL_VPS = 0,
+    NAL_FRAME,
+} NalUnitType;
+
 /* The data within the payload is already NAL-encapsulated; the type is merely
  * in the struct for easy access by the calling application.  All data returned
  * in an adc_nal, including the data in payload, is no longer valid after the
@@ -95,12 +101,12 @@ typedef struct adc_encoder adc_encoder;
 
 adc_encoder *adc_encoder_open(adc_param *p);
 void        adc_encoder_close(adc_encoder* enc);
-int         adc_encoder_headers(adc_encoder *enc, adc_nal *pp_nal, uint32_t *pi_nal);
+int         adc_encoder_headers(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal);
 
 /*adc decoder*/
 
 
-#define ADC_BUILD 006
+#define ADC_BUILD 007
 
 #ifdef __cplusplus
 }

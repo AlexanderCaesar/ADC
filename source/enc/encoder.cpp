@@ -12,6 +12,7 @@
 #include"log.h"
 #include"adc.h"
 #include"encoder.h"
+#include"entropy.h"
 
 adc_encoder *adc_encoder_open(adc_param *p)
 {
@@ -53,13 +54,20 @@ void adc_encoder_close(adc_encoder* enc)
     }
 }
 
-int adc_encoder_headers(adc_encoder *enc, adc_nal *pp_nal, uint32_t *pi_nal)
+int adc_encoder_headers(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal)
 {
     if (pp_nal && enc)
     {
         Encoder *encoder = static_cast<Encoder*>(enc);
 
-        return 0;
+        Entropy entropy;
+        Bitstream bs;
+
+        encoder->getStreamHeaders(encoder->m_nalList, entropy, bs);
+        *pp_nal = &encoder->m_nalList.m_nal[0];
+        if (pi_nal) *pi_nal = encoder->m_nalList.m_numNal;
+
+        return encoder->m_nalList.m_occupancy;
     }
     return -1;
 }
@@ -80,6 +88,17 @@ void Encoder::destroy()
 void Encoder::printSummary()
 {
     INF("SUMMARY");
+}
+
+void Encoder::getStreamHeaders(NALList& list, Entropy& entropy, Bitstream& bs)
+{
+    entropy.setBitstream(&bs);
+
+    bs.resetBits();
+    entropy.codeVPS(&m_param);
+    bs.writeByteAlignment();
+    list.serialize(NAL_VPS, bs);
+
 }
 int Encoder::encode()
 {

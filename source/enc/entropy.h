@@ -9,9 +9,9 @@
 */
 
 
-#include"log.h"
-#include"adc.h"
-#include"nal.h"
+#include "log.h"
+#include "adc.h"
+#include "nal.h"
 #include "bitstream.h"
 
 #pragma once
@@ -21,5 +21,9 @@ class Entropy : public SyntaxElementWriter
 public:
 
     Entropy();
+
+    void setBitstream(Bitstream* p)    { m_bitIf = p; }
+
+    void Entropy::codeVPS(adc_param *p);
 
 };

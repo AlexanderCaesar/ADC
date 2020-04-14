@@ -11,9 +11,11 @@
 
 #include"log.h"
 #include"adc.h"
-#include"nal.h"
+#include <intrin.h>
 
 #pragma once
+
+#define CLZ(id, x)            _BitScanReverse(&id, x)
 
 class BitInterface
 {
@@ -54,7 +56,7 @@ public:
 
     Bitstream();
     ~Bitstream()
-    { 
+    {
         if (m_fifo)
         {
             free(m_fifo);
@@ -63,6 +65,17 @@ public:
     }
 
     void     resetBits()                     { m_partialByteBits = m_byteOccupancy = 0; m_partialByte = 0; }
+    uint32_t getNumberOfWrittenBytes() const { return m_byteOccupancy; }
+    uint32_t getNumberOfWrittenBits()  const { return m_byteOccupancy * 8 + m_partialByteBits; }
+    const uint8_t* getFIFO() const           { return m_fifo; }
+    void     copyBits(Bitstream* stream)     { m_partialByteBits = stream->m_partialByteBits; m_byteOccupancy = stream->m_byteOccupancy; m_partialByte = stream->m_partialByte; }
+
+    void     write(uint32_t val, uint32_t numBits);
+    void     writeByte(uint32_t val);
+
+    void     writeAlignOne();      // insert one bits until the bitstream is byte-aligned
+    void     writeAlignZero();     // insert zero bits until the bitstream is byte-aligned
+    void     writeByteAlignment(); // insert 1 bit, then pad to byte-align with zero
 
 private:
 
@@ -71,5 +84,7 @@ private:
     uint32_t m_byteOccupancy;
     uint32_t m_partialByteBits;
     uint8_t  m_partialByte;
+
+    void     push_back(uint8_t val);
 };
 

@@ -15,3 +15,10 @@
 Entropy::Entropy()
 {
 }
+
+void Entropy::codeVPS(adc_param *p)
+{
+    WRITE_UVLC(p->sourceHeight, "pic_width_in_luma_samples");
+    WRITE_UVLC(p->sourceWidth, "pic_height_in_luma_samples");
+    WRITE_UVLC(p->chromaFormat, "chroma_format_idc");
+}

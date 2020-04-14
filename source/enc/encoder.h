@@ -12,6 +12,7 @@
 #include"log.h"
 #include"adc.h"
 #include"nal.h"
+#include"entropy.h"
 
 #pragma once
 
@@ -34,6 +35,7 @@ public:
     void destroy();
     void printSummary();
 
-    int encode();
+    void getStreamHeaders(NALList& list, Entropy& entropy, Bitstream& bs);
+    int  encode();
 
 };

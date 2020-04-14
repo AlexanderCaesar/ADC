@@ -15,6 +15,20 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+int writeHeaders(const adc_nal* nal, uint32_t nalcount)
+{
+    uint32_t bytes = 0;
+
+    for (uint32_t i = 0; i < nalcount; i++)
+    {
+        fwrite((const void*)nal->payload, 1, nal->sizeBytes, ofs);
+        bytes += nal->sizeBytes;
+        nal++;
+    }
+
+    return bytes;
+}
+
 int main(int argc, char *argv[])
 {
     if (adcconfig.parse_arg(argc, argv))
@@ -33,7 +47,7 @@ int main(int argc, char *argv[])
         return 0;
     }
     
-    adc_nal  p_nal;
+    adc_nal* p_nal;
     uint32_t nal;
 
     if (adc_encoder_headers(encoder, &p_nal, &nal) < 0)
