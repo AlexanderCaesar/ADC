@@ -10,6 +10,7 @@
 
 
 #include"detropy.h"
+#include"log.h"
 #include"stdio.h"
 #include"stdlib.h"
 
@@ -103,6 +104,9 @@ int Detropy::decodeVPS(adc_param *p, adc_nal *nal)
     p->sourceHeight = ue(ptr, start_bit);
     p->sourceWidth = ue(ptr, start_bit);
     p->chromaFormat = ue(ptr, start_bit);
+
+    INF("\nwidth %3d   height %3d    chromaformat %d\n",
+        p->sourceWidth, p->sourceHeight, p->chromaFormat);
 
     return 0;
 }
