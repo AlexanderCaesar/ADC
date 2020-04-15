@@ -1,4 +1,4 @@
-# ADC
+# ADC 
 encoder: -i input.yuv -W 1920 -H 1080  -o adc.bin -R rec.yuv
 decoder: -i adc.bin -o dec.yuv
 This is a simple job, I want to do it better, I'm thinking.
