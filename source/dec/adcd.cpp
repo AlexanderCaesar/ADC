@@ -11,6 +11,7 @@
 #include"log.h"
 #include"adc.h"
 #include "adc_config.h"
+#include "files.h"
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -33,6 +34,15 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    Files files;
+
+    if (files.openfile(adcconfig))
+    {
+        ERR("Failure open files\n");
+        return 0;
+    }
+
     adc_decoder_close(decoder);
+    files.closefile();
     return 0;
 }

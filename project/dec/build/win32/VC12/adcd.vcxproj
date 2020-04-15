@@ -14,7 +14,9 @@
     <ClCompile Include="..\..\..\..\..\source\common\adc_config.cpp" />
     <ClCompile Include="..\..\..\..\..\source\common\bitstream.cpp" />
     <ClCompile Include="..\..\..\..\..\source\common\common.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\common\files.cpp" />
     <ClCompile Include="..\..\..\..\..\source\common\log.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\common\nal.cpp" />
     <ClCompile Include="..\..\..\..\..\source\dec\adcd.cpp" />
     <ClCompile Include="..\..\..\..\..\source\dec\decoder.cpp" />
   </ItemGroup>

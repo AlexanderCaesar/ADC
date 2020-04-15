@@ -111,7 +111,7 @@ void        adc_decoder_close(adc_decoder* dec);
 int         adc_decoder_headers(adc_decoder *dec, adc_nal **pp_nal, uint32_t *pi_nal);
 
 
-#define ADC_BUILD "0.0.10"
+#define ADC_BUILD "0.0.11"
 
 #ifdef __cplusplus
 }
