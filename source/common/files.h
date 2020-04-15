@@ -27,4 +27,7 @@ public:
     int openfile(ADCConfig adconfig);
     void closefile();
 
+    int writeNAL(FILE *fp, adc_nal* nal, uint32_t nalcount);
+    int writeHeaders(adc_nal* nal, uint32_t nalcount);
+
 };

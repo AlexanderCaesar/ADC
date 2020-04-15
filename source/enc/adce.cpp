@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
         return 0;
     }
     else
-        ;//totalbytes += cliopt.output->writeHeaders(p_nal, nal);
+        files.writeHeaders(p_nal, nal);
 
     adc_encoder_close(encoder);
 
