@@ -54,6 +54,31 @@ int Files::openfile(ADCConfig adconfig)
     return 0;
 }
 
+int Files::opendecoderfile(ADCConfig adconfig)
+{
+    if (adcconfig.output_file.length() > 1)
+    {
+        output = fopen(adcconfig.output_file.c_str(), "wb");
+        if (!output)
+        {
+            ERR("open file %s filed", adcconfig.output_file.c_str());
+            return -1;
+        }
+    }
+
+    if (adcconfig.rec_file.length() > 1)
+    {
+        recon = fopen(adcconfig.rec_file.c_str(), "wb");
+        if (!recon)
+        {
+            ERR("open file %s filed", adcconfig.rec_file.c_str());
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
 void Files::closefile()
 {
     if (input)

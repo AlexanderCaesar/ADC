@@ -25,6 +25,7 @@ public:
     Files();
 
     int openfile(ADCConfig adconfig);
+    int opendecoderfile(ADCConfig adconfig);
     void closefile();
 
     int writeNAL(FILE *fp, adc_nal* nal, uint32_t nalcount);

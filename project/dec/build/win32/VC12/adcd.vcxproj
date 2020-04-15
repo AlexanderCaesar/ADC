@@ -18,6 +18,7 @@
     <ClCompile Include="..\..\..\..\..\source\common\log.cpp" />
     <ClCompile Include="..\..\..\..\..\source\common\nal.cpp" />
     <ClCompile Include="..\..\..\..\..\source\dec\adcd.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\dec\AnnexBread.cpp" />
     <ClCompile Include="..\..\..\..\..\source\dec\decoder.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -28,6 +29,7 @@
     <ClInclude Include="..\..\..\..\..\source\common\files.h" />
     <ClInclude Include="..\..\..\..\..\source\common\log.h" />
     <ClInclude Include="..\..\..\..\..\source\common\nal.h" />
+    <ClInclude Include="..\..\..\..\..\source\dec\AnnexBread.h" />
     <ClInclude Include="..\..\..\..\..\source\dec\decoder.h" />
   </ItemGroup>
   <ItemGroup>

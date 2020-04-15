@@ -35,6 +35,7 @@ public:
     void destroy();
     void printSummary();
 
-    int  decode();
+    int  decodeVPS(adc_nal *nal);
+    int  decode(adc_nal *nal);
 
 };

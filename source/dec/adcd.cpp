@@ -8,13 +8,18 @@
 * @see
 */
 
-#include"log.h"
-#include"adc.h"
+#include "log.h"
+#include "adc.h"
 #include "adc_config.h"
 #include "files.h"
+#include "AnnexBread.h"
 
-#include<stdio.h>
-#include<stdlib.h>
+#include <fstream>
+#include <vector>
+#include <stdio.h>
+#include <stdlib.h>
+
+using namespace std;
 
 int main(int argc, char *argv[])
 {
@@ -36,10 +41,60 @@ int main(int argc, char *argv[])
 
     Files files;
 
-    if (files.openfile(adcconfig))
+    if (files.opendecoderfile(adcconfig))
     {
         ERR("Failure open files\n");
         return 0;
+    }
+
+    ifstream bitstreamFile(adcconfig.input_file.c_str(), ifstream::in | ifstream::binary);
+    if (!bitstreamFile)
+    {
+        ERR("failed to open bitstream file `%s' for reading\n", adcconfig.input_file.c_str());
+        return 0;
+    }
+
+    InputByteStream bytestream(bitstreamFile);
+
+    int nal_count = 0;
+    while (!!bitstreamFile)
+    {
+        /* location serves to work around a design fault in the decoder, whereby
+        * the process of reading a new slice that is the first slice of a new frame
+        * requires the TDecTop::decode() method to be called again with the same
+        * nal unit. */
+        streampos location = bitstreamFile.tellg();
+        AnnexBStats stats = AnnexBStats();
+
+        vector<uint8_t> nalUnit;
+        byteStreamNALUnit(bytestream, nalUnit, stats);
+
+        // call actual decoding function
+        bool bNewPicture = false;
+        if (nalUnit.empty())
+        {
+            /* this can happen if the following occur:
+            *  - empty input file
+            *  - two back-to-back start_code_prefixes
+            *  - start_code_prefix immediately followed by EOF
+            */
+            ERR("Warning: Attempt to decode an empty NAL unit\n");
+
+            break;
+        }
+
+        adc_nal nal;
+
+        nal.payload = nalUnit.data();
+        nal.type = nalUnit.data()[0];
+        nal.sizeBytes = nalUnit.size();
+
+        if(adc_decoder_decode(decoder,&nal) < 0)
+        {
+            ERR("Decode Frame failed");
+            return 0;
+        }
+        nal_count++;
     }
 
     adc_decoder_close(decoder);

@@ -39,12 +39,25 @@ void adc_decoder_close(adc_decoder* dec)
     }
 }
 
-int adc_decoder_headers(adc_decoder *dec, adc_nal **pp_nal, uint32_t *pi_nal)
+int adc_decoder_headers(adc_decoder* dec, adc_nal *nal)
 {
-
+    if (nal && dec)
+    {
+        Decoder *decoder = static_cast<Decoder*>(dec);
+        return decoder->decodeVPS(nal);
+    }
     return -1;
 }
 
+int adc_decoder_decode(adc_decoder* dec, adc_nal *nal)
+{
+    if (nal && dec)
+    {
+        Decoder *decoder = static_cast<Decoder*>(dec);
+        return decoder->decode(nal);
+    }
+    return -1;
+}
 Decoder::Decoder()
 {
     m_poc = -1;
@@ -74,8 +87,22 @@ void Decoder::printSummary()
     INF("SUMMARY");
 }
 
-
-int Decoder::decode()
+int Decoder::decodeVPS(adc_nal *nal)
 {
     return 0;
+}
+int Decoder::decode(adc_nal *nal)
+{
+    switch (nal->type)
+    {
+    case NAL_VPS:
+        ;
+        break;
+    case NAL_FRAME:
+        break;
+    default:
+        ERR("unkown nal type %d", nal->type);
+        return -1;
+    }
+    return -1;
 }
