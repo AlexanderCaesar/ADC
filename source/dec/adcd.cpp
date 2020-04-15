@@ -55,6 +55,7 @@ int main(int argc, char *argv[])
     }
 
     InputByteStream bytestream(bitstreamFile);
+    adc_nal nal;
 
     int nal_count = 0;
     while (!!bitstreamFile)
@@ -82,8 +83,6 @@ int main(int argc, char *argv[])
 
             break;
         }
-
-        adc_nal nal;
 
         nal.payload = nalUnit.data();
         nal.type = nalUnit.data()[0];

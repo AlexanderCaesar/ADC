@@ -13,6 +13,7 @@
 #include"adc.h"
 #include"nal.h"
 #include"bitstream.h"
+#include"detropy.h"
 
 #pragma once
 
@@ -25,6 +26,7 @@ public:
     int                m_poc; 
     adc_param          m_param;
     adc_stats          m_stats;
+    Detropy            m_detropy;
 
     Decoder();
     ~Decoder()

@@ -89,14 +89,14 @@ void Decoder::printSummary()
 
 int Decoder::decodeVPS(adc_nal *nal)
 {
-    return 0;
+    return m_detropy.decodeVPS(&m_param,nal);
 }
 int Decoder::decode(adc_nal *nal)
 {
     switch (nal->type)
     {
     case NAL_VPS:
-        ;
+        return decodeVPS(nal);
         break;
     case NAL_FRAME:
         break;

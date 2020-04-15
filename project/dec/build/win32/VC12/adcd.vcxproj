@@ -20,6 +20,7 @@
     <ClCompile Include="..\..\..\..\..\source\dec\adcd.cpp" />
     <ClCompile Include="..\..\..\..\..\source\dec\AnnexBread.cpp" />
     <ClCompile Include="..\..\..\..\..\source\dec\decoder.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\dec\detropy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\source\common\adc.h" />
@@ -31,6 +32,7 @@
     <ClInclude Include="..\..\..\..\..\source\common\nal.h" />
     <ClInclude Include="..\..\..\..\..\source\dec\AnnexBread.h" />
     <ClInclude Include="..\..\..\..\..\source\dec\decoder.h" />
+    <ClInclude Include="..\..\..\..\..\source\dec\detropy.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\third_party\getopt\build\win32\VC12\getopt.vcxproj">

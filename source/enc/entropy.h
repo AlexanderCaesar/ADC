@@ -24,6 +24,6 @@ public:
 
     void setBitstream(Bitstream* p)    { m_bitIf = p; }
 
-    void Entropy::codeVPS(adc_param *p);
+    void codeVPS(adc_param *p);
 
 };
