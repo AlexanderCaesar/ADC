@@ -104,9 +104,14 @@ void        adc_encoder_close(adc_encoder* enc);
 int         adc_encoder_headers(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal);
 
 /*adc decoder*/
+typedef struct adc_decoder adc_decoder;
+
+adc_decoder *adc_decoder_open(adc_param *p);
+void        adc_decoder_close(adc_decoder* dec);
+int         adc_decoder_headers(adc_decoder *dec, adc_nal **pp_nal, uint32_t *pi_nal);
 
 
-#define ADC_BUILD "0.0.9"
+#define ADC_BUILD "0.0.10"
 
 #ifdef __cplusplus
 }

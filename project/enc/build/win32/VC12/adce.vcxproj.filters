@@ -30,10 +30,10 @@
     <ClCompile Include="..\..\..\..\..\source\enc\entropy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\source\enc\bitstream.cpp">
+    <ClCompile Include="..\..\..\..\..\source\common\files.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\source\common\files.cpp">
+    <ClCompile Include="..\..\..\..\..\source\common\bitstream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,13 +56,13 @@
     <ClInclude Include="..\..\..\..\..\source\common\nal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\source\enc\bitstream.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\..\source\enc\entropy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\source\common\files.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\source\common\bitstream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

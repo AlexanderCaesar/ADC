@@ -12,15 +12,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\..\source\common\adc_config.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\common\bitstream.cpp" />
     <ClCompile Include="..\..\..\..\..\source\common\common.cpp" />
     <ClCompile Include="..\..\..\..\..\source\common\log.cpp" />
     <ClCompile Include="..\..\..\..\..\source\dec\adcd.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\dec\decoder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\source\common\adc.h" />
     <ClInclude Include="..\..\..\..\..\source\common\adc_config.h" />
+    <ClInclude Include="..\..\..\..\..\source\common\bitstream.h" />
     <ClInclude Include="..\..\..\..\..\source\common\common.h" />
+    <ClInclude Include="..\..\..\..\..\source\common\files.h" />
     <ClInclude Include="..\..\..\..\..\source\common\log.h" />
+    <ClInclude Include="..\..\..\..\..\source\common\nal.h" />
+    <ClInclude Include="..\..\..\..\..\source\dec\decoder.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\third_party\getopt\build\win32\VC12\getopt.vcxproj">

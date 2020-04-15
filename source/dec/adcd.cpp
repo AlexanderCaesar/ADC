@@ -17,10 +17,22 @@
 
 int main(int argc, char *argv[])
 {
-    adcconfig.parse_arg(argc, argv);
+    if (adcconfig.parse_arg(argc, argv))
+    {
+        return 0;
+    }
 
-    LogSetLevel(LOG_LEVEL_USER);
-    LogSetCallback(NULL, "inc.log", "stat.log");
-    USE("decoder");
+    LogSetLevel(LogLevel(adcconfig.adc_p.logLevel));
+    LogSetCallback(NULL, adcconfig.log_file.c_str(), NULL);
+
+    adc_decoder *decoder = adc_decoder_open(&adcconfig.adc_p);
+
+    if (!decoder)
+    {
+        ERR("open decoder failed.");
+        return 0;
+    }
+
+    adc_decoder_close(decoder);
     return 0;
 }
