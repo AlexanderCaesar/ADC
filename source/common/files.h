@@ -18,17 +18,24 @@
 class Files 
 {
 public:
-    FILE* input;
-    FILE* output;
-    FILE* recon;
+    FILE*    input;
+    FILE*    output;
+    FILE*    recon;
+    uint32_t width;
+    uint32_t height;
+    int      framesize;
+    uint8_t* buf;
+    int      chromaFormat;
 
     Files();
 
-    int openfile(ADCConfig adconfig);
-    int opendecoderfile(ADCConfig adconfig);
-    void closefile();
+    int   openfile(ADCConfig adconfig);
+    int   opendecoderfile(ADCConfig adconfig);
+    void  closefile();
 
-    int writeNAL(FILE *fp, adc_nal* nal, uint32_t nalcount);
-    int writeHeaders(adc_nal* nal, uint32_t nalcount);
+    int   readPicture(adc_picture& pic);
+
+    int   writeNAL(FILE *fp, adc_nal* nal, uint32_t nalcount);
+    int   writeHeaders(adc_nal* nal, uint32_t nalcount);
 
 };

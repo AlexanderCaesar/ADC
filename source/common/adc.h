@@ -17,11 +17,11 @@ extern "C" {
 #endif
 
 /* Supported internal color space types (according to semantics of chroma_format_idc) */
-#define X265_CSP_I400           0  /* yuv 4:0:0 planar */
-#define X265_CSP_I420           1  /* yuv 4:2:0 planar */
-#define X265_CSP_I422           2  /* yuv 4:2:2 planar */
-#define X265_CSP_I444           3  /* yuv 4:4:4 planar */
-#define X265_CSP_COUNT          4  /* Number of supported internal color spaces */
+#define ADC_CSP_I400           0  /* yuv 4:0:0 planar */
+#define ADC_CSP_I420           1  /* yuv 4:2:0 planar */
+#define ADC_CSP_I422           2  /* yuv 4:2:2 planar */
+#define ADC_CSP_I444           3  /* yuv 4:4:4 planar */
+#define ADC_CSP_COUNT          4  /* Number of supported internal color spaces */
 
 #define MAX_NAL_UNITS          16
 
@@ -96,12 +96,42 @@ typedef struct adc_param
 
 } adc_param;
 
+/* Used to pass pictures into the encoder, and to get picture data back out of
+* the encoder.  The input and output semantics are different */
+typedef struct adc_picture
+{
+    /* presentation time stamp: user-specified, returned on output */
+    int64_t pts;
+
+    /* display time stamp: ignored on input, copied from reordered pts. Returned
+    * on output */
+    int64_t dts;
+
+    /* Must be specified on input pictures, the number of planes is determined
+    * by the colorSpace value */
+    uint8_t*   planes[3];
+
+    /* Stride is the number of bytes between row starts */
+    int     stride[3];
+
+    /* Ignored on input, set to picture count, returned on output */
+    int     poc;
+
+    /* Must be specified on input pictures: ADC_CSP_I420 or other. It must
+    * match the internal color space of the encoder. adc_picture_init() will
+    * initialize this value to the internal color space */
+    int     colorSpace;
+
+} adc_picture;
+
+
 /*adc encoder*/
 typedef struct adc_encoder adc_encoder;
 
 adc_encoder *adc_encoder_open(adc_param *p);
 void        adc_encoder_close(adc_encoder* enc);
 int         adc_encoder_headers(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal);
+void        adc_picture_init(adc_param *param, adc_picture *pic);
 
 /*adc decoder*/
 typedef struct adc_decoder adc_decoder;

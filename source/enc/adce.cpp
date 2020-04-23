@@ -54,6 +54,26 @@ int main(int argc, char *argv[])
     else
         files.writeHeaders(p_nal, nal);
 
+    adc_picture pic_orig;
+    adc_picture *pic_in = &pic_orig;
+
+    adc_picture_init(&adcconfig.adc_p, pic_in);
+
+    int inFrameCount = 0;
+
+    while (pic_in)
+    {
+        pic_orig.poc = inFrameCount;
+
+        if (adcconfig.adc_p.totalFrames && inFrameCount >= adcconfig.adc_p.totalFrames)
+            pic_in = NULL;
+        else if (!files.readPicture(pic_orig))
+            inFrameCount++;
+        else
+            pic_in = NULL;
+
+    }
+
     adc_encoder_close(encoder);
 
     files.closefile();

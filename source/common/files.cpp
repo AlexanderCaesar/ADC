@@ -15,12 +15,41 @@
 Files::Files()
 {
     input = NULL;
-    output = NULL;;
-    recon = NULL;;
+    output = NULL;
+    recon = NULL;
+    width = 0;
+    height = 0;
+    buf = NULL;
+    framesize = 0;
+    chromaFormat = ADC_CSP_I420;
 }
 
 int Files::openfile(ADCConfig adconfig)
 {
+    width = adcconfig.adc_p.sourceWidth;
+    height = adcconfig.adc_p.sourceHeight;
+
+    chromaFormat = adcconfig.adc_p.chromaFormat;
+    if (adcconfig.adc_p.chromaFormat == ADC_CSP_I420)
+    {
+        framesize  = width*height;
+        framesize += (width>>1)*(height>>1);
+        framesize += (width >> 1)*(height >> 1);
+    }
+    else
+    {
+        ERR("other chromaFormat to be added");
+        return -1;
+    }
+    if (framesize > 0)
+    {
+        buf = (uint8_t*)malloc(framesize * sizeof(uint8_t));
+    }
+    else
+    {
+        ERR("buf check failed  framesize %d", framesize);
+        return -1;
+    }
     if (adcconfig.input_file.length() > 1)
     {
         input = fopen(adcconfig.input_file.c_str(), "rb");
@@ -81,6 +110,11 @@ int Files::opendecoderfile(ADCConfig adconfig)
 
 void Files::closefile()
 {
+    if (buf)
+    {
+        free(buf);
+        buf = NULL;
+    }
     if (input)
     {
         fclose(input);
@@ -121,4 +155,30 @@ int Files::writeNAL(FILE *fp, adc_nal* nal, uint32_t nalcount)
 int Files::writeHeaders(adc_nal* nal, uint32_t nalcount)
 {
     return writeNAL(output, nal, nalcount);
+}
+
+int Files::readPicture(adc_picture& pic)
+{
+    pic.colorSpace = chromaFormat;
+    pic.stride[0] = width;
+    int size = fread(buf, 1, framesize, input);
+    if (size < framesize)
+    {
+        ERR("read file failed");
+        return -1;
+    }
+    if (chromaFormat == ADC_CSP_I420)
+    {
+        pic.stride[1] = pic.stride[0] >> 1;
+        pic.stride[2] = pic.stride[0] >> 1;
+        pic.planes[0] = (uint8_t*)buf;
+        pic.planes[1] = (uint8_t*)pic.planes[0] + pic.stride[0] * height;
+        pic.planes[2] = (uint8_t*)pic.planes[1] + pic.stride[1] * (height >> 1);
+    }
+    else
+    {
+        ERR("other chromaFormat to be added");
+        return -1; 
+    }
+    return 0;
 }
