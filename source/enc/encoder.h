@@ -13,6 +13,7 @@
 #include"adc.h"
 #include"nal.h"
 #include"entropy.h"
+#include "dpb.h"
 
 #pragma once
 
@@ -26,6 +27,8 @@ public:
     adc_param          m_param;
     NALList            m_nalList;
     adc_stats          m_stats;
+
+    DPB*               m_dpb;
 
     Encoder();
     ~Encoder()

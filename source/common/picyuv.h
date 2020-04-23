@@ -38,7 +38,7 @@ public:
 
     PicYuv();
 
-    bool  create(adc_param* param, bool picAlloc = true, pixel *pixelbuf = NULL);
+    int   create(adc_param* param);
 
     void  destroy();
 

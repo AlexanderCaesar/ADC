@@ -39,7 +39,7 @@ public:
 
     Frame();
 
-    bool create(adc_param *param);
+    int  create(adc_param *param);
 
     void destroy();
 };

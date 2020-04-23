@@ -22,12 +22,25 @@ Frame::Frame()
     m_encodeStartTime = 0;
 }
 
-bool Frame::create(adc_param *param)
+int Frame::create(adc_param *param)
 {
-    return true;
+    m_fencPic = new PicYuv;
+    m_param = param;
+
+    if (m_fencPic->create(param))
+    {
+        return -1;
+    }
+
+    return 0;
 }
 
 void Frame::destroy()
 {
-
+    if (m_fencPic)
+    {
+        m_fencPic->destroy();
+        delete m_fencPic;
+        m_fencPic = NULL;
+    }
 }

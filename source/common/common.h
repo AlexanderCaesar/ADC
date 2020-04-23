@@ -15,6 +15,9 @@
 
 typedef uint8_t  pixel;
 
+#define CHROMA_H_SHIFT(x) (x == ADC_CSP_I420 || x == ADC_CSP_I422)
+#define CHROMA_V_SHIFT(x) (x == ADC_CSP_I420)
+
 void BuildLogFilePath(const char *path);
 const char* GetOsVersion();
 int64_t time_mdate();

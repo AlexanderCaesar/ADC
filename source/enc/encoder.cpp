@@ -107,15 +107,17 @@ Encoder::Encoder()
     m_stats.bitrate = 0;
     m_stats.accBits = 0;
     m_stats.encodedPictureCount = 0;
+    m_dpb = NULL;
 
 }
 
 void Encoder::create()
 {
-
+    m_dpb = new DPB(&m_param);
 }
 void Encoder::destroy()
 {
+    delete m_dpb;
 }
 
 void Encoder::printSummary()
@@ -142,6 +144,32 @@ int Encoder::encode(const adc_picture* pic_in, adc_picture* pic_out)
     if (pic_in)
     {
         Frame *inFrame;
+
+        if (m_dpb->m_freeList.empty())
+        {
+            inFrame = new Frame;
+            inFrame->m_encodeStartTime = time_mdate();
+
+            if (inFrame->create(&m_param))//ÉêÇëframe¿Õ¼ä
+            {
+                ERR("memory allocation failure, aborting encode\n");
+                inFrame->destroy();
+                delete inFrame;
+                return -1;
+            }
+
+        }
+        else
+        {
+            inFrame = m_dpb->m_freeList.popBack();
+            inFrame->m_encodeStartTime = time_mdate();
+        }
+
+
+    }
+    else
+    {
+        //to be added
     }
     return 0;
 }
