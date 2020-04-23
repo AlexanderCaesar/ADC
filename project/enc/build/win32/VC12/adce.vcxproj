@@ -18,6 +18,7 @@
     <ClCompile Include="..\..\..\..\..\source\common\frame.cpp" />
     <ClCompile Include="..\..\..\..\..\source\common\log.cpp" />
     <ClCompile Include="..\..\..\..\..\source\common\nal.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\common\piclist.cpp" />
     <ClCompile Include="..\..\..\..\..\source\common\picyuv.cpp" />
     <ClCompile Include="..\..\..\..\..\source\enc\adce.cpp" />
     <ClCompile Include="..\..\..\..\..\source\enc\encoder.cpp" />
@@ -32,6 +33,7 @@
     <ClInclude Include="..\..\..\..\..\source\common\frame.h" />
     <ClInclude Include="..\..\..\..\..\source\common\log.h" />
     <ClInclude Include="..\..\..\..\..\source\common\nal.h" />
+    <ClInclude Include="..\..\..\..\..\source\common\piclist.h" />
     <ClInclude Include="..\..\..\..\..\source\common\picyuv.h" />
     <ClInclude Include="..\..\..\..\..\source\enc\encoder.h" />
     <ClInclude Include="..\..\..\..\..\source\enc\entropy.h" />
