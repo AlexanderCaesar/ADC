@@ -31,3 +31,8 @@ DPB::~DPB()
         delete curFrame;
     }
 }
+
+void DPB::prepareEncode(Frame *newFrame)
+{
+    m_picList.pushFront(*newFrame);
+}

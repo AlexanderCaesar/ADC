@@ -9,11 +9,12 @@
 */
 
 
-#include"log.h"
-#include"adc.h"
-#include"encoder.h"
-#include"entropy.h"
+#include "log.h"
+#include "adc.h"
+#include "encoder.h"
+#include "entropy.h"
 #include "frame.h"
+#include "picyuv.h"
 
 adc_encoder *adc_encoder_open(adc_param *p)
 {
@@ -164,6 +165,13 @@ int Encoder::encode(const adc_picture* pic_in, adc_picture* pic_out)
             inFrame = m_dpb->m_freeList.popBack();
             inFrame->m_encodeStartTime = time_mdate();
         }
+
+        /* Copy input picture into a Frame and PicYuv, send to lookahead */
+        inFrame->m_fencPic->copyFromPicture(*pic_in, m_param);
+
+        inFrame->m_poc = ++m_poc;
+        inFrame->m_pts = pic_in->pts;
+
 
 
     }

@@ -42,6 +42,6 @@ public:
 
     void  destroy();
 
-    void  copyFromPicture(const adc_picture&, const adc_param& param, int padx, int pady);
+    void  copyFromPicture(const adc_picture&, const adc_param& param);
 
 };

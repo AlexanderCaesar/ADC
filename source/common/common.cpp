@@ -155,3 +155,24 @@ static string GetOsVersion()
   return os_version.c_str();
 }
 #endif
+
+
+static uint32_t modecount[256];
+/*The mode is that value that is repeated most often in the data set.*/
+pixel calBoderMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride)
+{
+    for (int i = 0; i < 256; i++)
+        modecount[i] = 0;
+
+    for (uint32_t i = 0; i < width; i++)
+    {
+        modecount[src[i]]++;
+    }
+    for (uint32_t i = 0; i < height; i++)
+    {
+        modecount[src[i*stride]]++;
+    }
+
+    //to be added
+    return 0;
+}

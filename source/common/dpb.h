@@ -28,5 +28,7 @@ public:
 
     ~DPB();
 
+    void DPB::prepareEncode(Frame *newFrame);
+
 };
 

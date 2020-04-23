@@ -90,6 +90,90 @@ int PicYuv::create(adc_param* param)
     return 0;
 }
 
+/* Copy pixels from an adc_picture into internal PicYuv instance.*/
+void PicYuv::copyFromPicture(const adc_picture& pic, const adc_param& param)
+{
+    uint32_t width = m_picWidth;
+    uint32_t height = m_picHeight;
+
+    m_picCsp = pic.colorSpace;
+
+    pixel *yPixel = m_picOrg[0];
+    uint8_t *yChar = (uint8_t*)pic.planes[0];
+
+    for (uint32_t r = 0; r < height; r++)
+    {
+        memcpy(yPixel, yChar, width * sizeof(pixel));
+
+        yPixel += m_stride;
+        yChar += pic.stride[0] / sizeof(*yChar);
+    }
+
+    if (param.chromaFormat != ADC_CSP_I400)
+    {
+        pixel *uPixel = m_picOrg[1];
+        pixel *vPixel = m_picOrg[2];
+
+        uint8_t *uChar = (uint8_t*)pic.planes[1];
+        uint8_t *vChar = (uint8_t*)pic.planes[2];
+
+        for (uint32_t r = 0; r < height >> m_vChromaShift; r++)
+        {
+            memcpy(uPixel, uChar, (width >> m_hChromaShift) * sizeof(pixel));
+            memcpy(vPixel, vChar, (width >> m_hChromaShift) * sizeof(pixel));
+
+            uPixel += m_strideC;
+            vPixel += m_strideC;
+            uChar += pic.stride[1] / sizeof(*uChar);
+            vChar += pic.stride[2] / sizeof(*vChar);
+        }
+    }
+
+    pixel *Y = m_picBuf[0];
+    pixel *U = m_picBuf[1];
+    pixel *V = m_picBuf[2];
+
+    /* extend the top edge */
+    for (uint32_t x = 0; x < (m_picWidth + m_marginX); x++)
+    {
+        Y[x] = 128;
+    }
+
+    /* extend the left edge */
+    for (uint32_t y = 0; y < (m_picHeight + m_marginY); y++)
+    {
+        Y[0] = 128;
+        Y += m_stride;
+    }
+
+    /* extend the top edge */
+    for (uint32_t x = 0; x < ((m_picWidth >> m_hChromaShift) + m_marginX); x++)
+    {
+        U[x] = 128;
+    }
+
+    /* extend the left edge */
+    for (uint32_t y = 0; y < ((m_picHeight >> m_vChromaShift) + m_marginY); y++)
+    {
+        U[0] = 128;
+        U += m_strideC;
+    }
+
+
+    /* extend the top edge */
+    for (uint32_t x = 0; x < ((m_picWidth >> m_hChromaShift) + m_marginX); x++)
+    {
+        V[x] = 128;
+    }
+
+    /* extend the left edge */
+    for (uint32_t y = 0; y < ((m_picHeight >> m_vChromaShift) + m_marginY); y++)
+    {
+        V[0] = 128;
+        V += m_strideC;
+    }
+}
+
 
 void PicYuv::destroy()
 {
