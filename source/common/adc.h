@@ -153,7 +153,7 @@ int         adc_decoder_headers(adc_decoder* dec, adc_nal *nal);
 int         adc_decoder_decode(adc_decoder* dec,adc_nal *nal);
 
 
-#define ADC_BUILD "0.1.1"
+#define ADC_BUILD "0.1.2"
 
 #ifdef __cplusplus
 }
