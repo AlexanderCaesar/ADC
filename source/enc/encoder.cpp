@@ -78,6 +78,21 @@ void adc_picture_init(adc_param *param, adc_picture *pic)
 
     pic->colorSpace = param->chromaFormat;
 }
+
+int adc_encoder_encode(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal, adc_picture *pic_in, adc_picture *pic_out)
+{
+    if (!enc)
+        return -1;
+
+    Encoder *encoder = static_cast<Encoder*>(enc);
+    int numEncoded = encoder->encode(pic_in, pic_out);
+
+    {
+        //to be done
+    }
+
+    return -1;
+}
 Encoder::Encoder()
 {
     m_poc = -1;
@@ -121,7 +136,11 @@ void Encoder::getStreamHeaders(NALList& list, Entropy& entropy, Bitstream& bs)
         m_stats.accBits += list.m_nal[i].sizeBytes<<3;//*8
     }
 }
-int Encoder::encode()
+int Encoder::encode(const adc_picture* pic_in, adc_picture* pic_out)
 {
+    if (pic_in)
+    {
+
+    }
     return 0;
 }

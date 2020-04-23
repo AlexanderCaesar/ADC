@@ -10,7 +10,10 @@
 
 #pragma once
 
-#include<stdint.h>
+#include <stdint.h>
+#include "adc.h"
+
+typedef uint8_t  pixel;
 
 void BuildLogFilePath(const char *path);
 const char* GetOsVersion();

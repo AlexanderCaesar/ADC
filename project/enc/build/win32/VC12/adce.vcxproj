@@ -17,6 +17,7 @@
     <ClCompile Include="..\..\..\..\..\source\common\files.cpp" />
     <ClCompile Include="..\..\..\..\..\source\common\log.cpp" />
     <ClCompile Include="..\..\..\..\..\source\common\nal.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\common\picyuv.cpp" />
     <ClCompile Include="..\..\..\..\..\source\enc\adce.cpp" />
     <ClCompile Include="..\..\..\..\..\source\enc\encoder.cpp" />
     <ClCompile Include="..\..\..\..\..\source\enc\entropy.cpp" />
@@ -29,6 +30,7 @@
     <ClInclude Include="..\..\..\..\..\source\common\files.h" />
     <ClInclude Include="..\..\..\..\..\source\common\log.h" />
     <ClInclude Include="..\..\..\..\..\source\common\nal.h" />
+    <ClInclude Include="..\..\..\..\..\source\common\picyuv.h" />
     <ClInclude Include="..\..\..\..\..\source\enc\encoder.h" />
     <ClInclude Include="..\..\..\..\..\source\enc\entropy.h" />
   </ItemGroup>

@@ -54,9 +54,11 @@ int main(int argc, char *argv[])
     else
         files.writeHeaders(p_nal, nal);
 
-    adc_picture pic_orig;
+    adc_picture pic_orig, pic_out;;
     adc_picture *pic_in = &pic_orig;
 
+    adc_picture *pic_recon = (adcconfig.adc_p.bRec) ? &pic_out : NULL;
+    
     adc_picture_init(&adcconfig.adc_p, pic_in);
 
     int inFrameCount = 0;
@@ -71,6 +73,22 @@ int main(int argc, char *argv[])
             inFrameCount++;
         else
             pic_in = NULL;
+
+        if (pic_in)
+        {
+            /* Overwrite PTS */
+            pic_in->pts = pic_in->poc;
+        }
+
+        int numEncoded = adc_encoder_encode(encoder, &p_nal, &nal, pic_in, pic_recon);
+        if (numEncoded < 0)
+        {
+            break;
+        }
+
+        {
+            //to be done
+        }
 
     }
 

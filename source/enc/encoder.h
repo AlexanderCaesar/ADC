@@ -37,6 +37,6 @@ public:
     void printSummary();
 
     void getStreamHeaders(NALList& list, Entropy& entropy, Bitstream& bs);
-    int  encode();
+    int  encode(const adc_picture* pic_in, adc_picture* pic_out);
 
 };

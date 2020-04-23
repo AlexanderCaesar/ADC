@@ -133,6 +133,17 @@ void        adc_encoder_close(adc_encoder* enc);
 int         adc_encoder_headers(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal);
 void        adc_picture_init(adc_param *param, adc_picture *pic);
 
+/* adc_encoder_encode:
+*      encode one picture.
+*      *pi_nal is the number of NAL units outputted in pp_nal.
+*      returns negative on error, 1 if a picture and access unit were output,
+*      or zero if the encoder pipeline is still filling or is empty after flushing.
+*      the payloads of all output NALs are guaranteed to be sequential in memory.
+*      To flush the encoder and retrieve delayed output pictures, pass pic_in as NULL.
+*      Once flushing has begun, all subsequent calls must pass pic_in as NULL. */
+int adc_encoder_encode(adc_encoder *encoder, adc_nal **pp_nal, uint32_t *pi_nal, adc_picture *pic_in, adc_picture *pic_out);
+
+
 /*adc decoder*/
 typedef struct adc_decoder adc_decoder;
 
