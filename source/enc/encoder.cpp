@@ -13,6 +13,7 @@
 #include"adc.h"
 #include"encoder.h"
 #include"entropy.h"
+#include "frame.h"
 
 adc_encoder *adc_encoder_open(adc_param *p)
 {
@@ -140,7 +141,7 @@ int Encoder::encode(const adc_picture* pic_in, adc_picture* pic_out)
 {
     if (pic_in)
     {
-
+        Frame *inFrame;
     }
     return 0;
 }

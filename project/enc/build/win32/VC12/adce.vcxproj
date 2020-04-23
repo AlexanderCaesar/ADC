@@ -14,6 +14,7 @@
     <ClCompile Include="..\..\..\..\..\source\common\adc_config.cpp" />
     <ClCompile Include="..\..\..\..\..\source\common\bitstream.cpp" />
     <ClCompile Include="..\..\..\..\..\source\common\common.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\common\dpb.cpp" />
     <ClCompile Include="..\..\..\..\..\source\common\files.cpp" />
     <ClCompile Include="..\..\..\..\..\source\common\frame.cpp" />
     <ClCompile Include="..\..\..\..\..\source\common\log.cpp" />
@@ -29,6 +30,7 @@
     <ClInclude Include="..\..\..\..\..\source\common\adc_config.h" />
     <ClInclude Include="..\..\..\..\..\source\common\bitstream.h" />
     <ClInclude Include="..\..\..\..\..\source\common\common.h" />
+    <ClInclude Include="..\..\..\..\..\source\common\dpb.h" />
     <ClInclude Include="..\..\..\..\..\source\common\files.h" />
     <ClInclude Include="..\..\..\..\..\source\common\frame.h" />
     <ClInclude Include="..\..\..\..\..\source\common\log.h" />

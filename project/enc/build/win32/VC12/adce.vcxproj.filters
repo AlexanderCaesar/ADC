@@ -45,6 +45,9 @@
     <ClCompile Include="..\..\..\..\..\source\common\piclist.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\source\common\dpb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\source\common\log.h">
@@ -81,6 +84,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\source\common\piclist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\source\common\dpb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
