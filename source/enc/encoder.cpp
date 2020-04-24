@@ -95,6 +95,7 @@ int adc_encoder_encode(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal, adc
 
     return -1;
 }
+
 Encoder::Encoder()
 {
     m_poc = -1;
@@ -141,18 +142,47 @@ void Encoder::getStreamHeaders(NALList& list, Entropy& entropy, Bitstream& bs)
     }
 }
 
-int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, uint32_t height, uint32_t, YUVType yuv)
+int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, uint32_t height,  YUVType yuv)
 {
-    return 0;
+    int min = 0; 
+    int max = 0;
+    int mode = calCUMode(curFrame->m_fencPic->m_picOrg[yuv], width, height, curFrame->m_fencPic->m_stride,min,max);
+
+    int split = (mode - min > m_param.et) || (max - mode > m_param.et);
+
+    if (!split)
+    {
+        return 0;
+    }
+    else
+    {
+        uint32_t ww = width >> 1;
+        uint32_t hh = height >> 1;
+        for (uint32_t subPartIdx = 0; subPartIdx < 4; subPartIdx++)
+        {
+            uint32_t XX = X + ww * (subPartIdx >> 1);
+            uint32_t YY = Y + hh * (subPartIdx & 1);
+
+            uint32_t www = ww + (width % 2) * (subPartIdx >> 1);
+            uint32_t hhh = hh + (height % 2) * (subPartIdx & 1);
+            quadtree(curFrame, XX, YY, www, hhh, yuv);
+
+        }
+        return 1;
+    }
 }
+
 int Encoder::compressFrame()
 {
     Frame* curFrame = m_dpb->m_picList.first();
     if (!curFrame)
         return -1;
 
+    quadtree(curFrame, 0, 0, m_param.sourceWidth, m_param.sourceHeight, Y);
+
     return 0;
 }
+
 int Encoder::encode(const adc_picture* pic_in, adc_picture* pic_out)
 {
     int ret = -1;

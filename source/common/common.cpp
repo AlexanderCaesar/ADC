@@ -176,3 +176,49 @@ pixel calBoderMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride)
     //to be added
     return 0;
 }
+
+int calCUMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride, int& min, int& max)
+{
+    for (int i = 0; i < 256; i++)
+        modecount[i] = 0;
+
+
+    for (uint32_t h = 0; h < height; h++)
+    {
+        for (uint32_t w = 0; w < width; w++)
+        {
+            modecount[src[w]]++;
+        }
+        src += stride;
+    }
+    uint32_t max_cout = 0;
+    pixel    mode = 0;
+
+    for (int i = 0; i < 256; i++)
+    {
+        if (modecount[i])
+        {
+            min = i;
+            break;
+        }
+    }
+
+    for (int i = 255; i >= 0; i--)
+    {
+        if (modecount[i])
+        {
+            max = i;
+            break;
+        }
+    }
+
+    for (int i = 0; i < 256; i++)
+    {
+        if (modecount[i] > max_cout)
+        {
+            max_cout = modecount[i];
+            mode = i;
+        }
+    }
+    return mode;
+}

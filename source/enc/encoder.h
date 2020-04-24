@@ -41,7 +41,7 @@ public:
 
     void getStreamHeaders(NALList& list, Entropy& entropy, Bitstream& bs);
     int  encode(const adc_picture* pic_in, adc_picture* pic_out);
-    int  quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, uint32_t height, uint32_t, YUVType yuv);
+    int  quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, uint32_t height, YUVType yuv);
     int  compressFrame();
 
 };
