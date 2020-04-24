@@ -24,8 +24,7 @@ public:
 
     uint32_t m_picWidth;   
     uint32_t m_picHeight;  
-    intptr_t m_stride;     
-    intptr_t m_strideC;   
+    intptr_t m_stride[3];      
 
     uint32_t m_picCsp;    
     uint32_t m_hChromaShift;

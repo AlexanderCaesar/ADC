@@ -25,8 +25,10 @@ PicYuv::PicYuv()
     m_picOrg[1] = NULL;
     m_picOrg[2] = NULL;
 
-    m_stride = 0;
-    m_strideC = 0;
+    m_stride[0] = 0;
+    m_stride[1] = 0;
+    m_stride[2] = 0;
+
     m_hChromaShift = 0;
     m_vChromaShift = 0;
 }
@@ -48,22 +50,22 @@ int PicYuv::create(adc_param* param)
     m_marginX = 1; 
     m_marginY = 1;
 
-    m_stride = m_picWidth + m_marginX;
+    m_stride[0] = m_picWidth + m_marginX;
 
-    m_picBuf[0] = (uint8_t*)malloc(m_stride * (m_picHeight + m_marginY )*sizeof(pixel));
+    m_picBuf[0] = (uint8_t*)malloc(m_stride[0] * (m_picHeight + m_marginY)*sizeof(pixel));
 
     if (!m_picBuf[0])
     {
         ERR("malloc failed");
         return -1;
     }
-    m_picOrg[0] = m_picBuf[0] + m_marginY * m_stride + m_marginX;
+    m_picOrg[0] = m_picBuf[0] + m_marginY *  m_stride[0] + m_marginX;
 
     if (picCsp != ADC_CSP_I400)
     {
-        m_strideC = (m_picWidth >> m_hChromaShift) + m_marginX;
+        m_stride[1] = m_stride[2] = (m_picWidth >> m_hChromaShift) + m_marginX;
 
-        m_picBuf[1] = (uint8_t*)malloc(m_strideC * (((m_picHeight >> m_hChromaShift) + m_marginY))*sizeof(pixel));
+        m_picBuf[1] = (uint8_t*)malloc(m_stride[1] * (((m_picHeight >> m_hChromaShift) + m_marginY))*sizeof(pixel));
 
         if (!m_picBuf[1])
         {
@@ -71,7 +73,7 @@ int PicYuv::create(adc_param* param)
             return -1;
         }
 
-        m_picBuf[2] = (uint8_t*)malloc(m_strideC * (((m_picHeight >> m_hChromaShift) + m_marginY))*sizeof(pixel));
+        m_picBuf[2] = (uint8_t*)malloc(m_stride[2] * (((m_picHeight >> m_hChromaShift) + m_marginY))*sizeof(pixel));
 
         if (!m_picBuf[2])
         {
@@ -79,8 +81,8 @@ int PicYuv::create(adc_param* param)
             return -1;
         }
 
-        m_picOrg[1] = m_picBuf[1] + m_marginY * m_strideC + m_marginX;
-        m_picOrg[2] = m_picBuf[2] + m_marginY * m_strideC + m_marginX;
+        m_picOrg[1] = m_picBuf[1] + m_marginY * m_stride[1] + m_marginX;
+        m_picOrg[2] = m_picBuf[2] + m_marginY * m_stride[2] + m_marginX;
     }
     else
     {
@@ -105,7 +107,7 @@ void PicYuv::copyFromPicture(const adc_picture& pic, const adc_param& param)
     {
         memcpy(yPixel, yChar, width * sizeof(pixel));
 
-        yPixel += m_stride;
+        yPixel += m_stride[0];
         yChar += pic.stride[0] / sizeof(*yChar);
     }
 
@@ -122,8 +124,8 @@ void PicYuv::copyFromPicture(const adc_picture& pic, const adc_param& param)
             memcpy(uPixel, uChar, (width >> m_hChromaShift) * sizeof(pixel));
             memcpy(vPixel, vChar, (width >> m_hChromaShift) * sizeof(pixel));
 
-            uPixel += m_strideC;
-            vPixel += m_strideC;
+            uPixel += m_stride[1];
+            vPixel += m_stride[2];
             uChar += pic.stride[1] / sizeof(*uChar);
             vChar += pic.stride[2] / sizeof(*vChar);
         }
@@ -143,7 +145,7 @@ void PicYuv::copyFromPicture(const adc_picture& pic, const adc_param& param)
     for (uint32_t y = 0; y < (m_picHeight + m_marginY); y++)
     {
         Y[0] = 128;
-        Y += m_stride;
+        Y += m_stride[0];
     }
 
     /* extend the top edge */
@@ -156,7 +158,7 @@ void PicYuv::copyFromPicture(const adc_picture& pic, const adc_param& param)
     for (uint32_t y = 0; y < ((m_picHeight >> m_vChromaShift) + m_marginY); y++)
     {
         U[0] = 128;
-        U += m_strideC;
+        U += m_stride[1];
     }
 
 
@@ -170,7 +172,7 @@ void PicYuv::copyFromPicture(const adc_picture& pic, const adc_param& param)
     for (uint32_t y = 0; y < ((m_picHeight >> m_vChromaShift) + m_marginY); y++)
     {
         V[0] = 128;
-        V += m_strideC;
+        V += m_stride[2];
     }
 }
 
@@ -194,7 +196,7 @@ void PicYuv::padPicture(const adc_param& param)
     for (uint32_t y = 0; y < (m_picHeight + m_marginY); y++)
     {
         Y[0] = 128;
-        Y += m_stride;
+        Y += m_stride[0];
     }
 
     /* extend the top edge */
@@ -207,7 +209,7 @@ void PicYuv::padPicture(const adc_param& param)
     for (uint32_t y = 0; y < ((m_picHeight >> m_vChromaShift) + m_marginY); y++)
     {
         U[0] = 128;
-        U += m_strideC;
+        U += m_stride[1];
     }
 
 
@@ -221,7 +223,7 @@ void PicYuv::padPicture(const adc_param& param)
     for (uint32_t y = 0; y < ((m_picHeight >> m_vChromaShift) + m_marginY); y++)
     {
         V[0] = 128;
-        V += m_strideC;
+        V += m_stride[2];
     }
 }
 

@@ -146,7 +146,7 @@ int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
 {
     int min = 0; 
     int max = 0;
-    int mode = calCUMode(curFrame->m_fencPic->m_picOrg[yuv], width, height, curFrame->m_fencPic->m_stride,min,max);
+    int mode = calCUMode(curFrame->m_fencPic->m_picOrg[yuv], width, height, curFrame->m_fencPic->m_stride[yuv],min,max);
 
     int split = (mode - min > m_param.et) || (max - mode > m_param.et);
 
@@ -183,6 +183,8 @@ int Encoder::compressFrame()
         return -1;
 
     quadtree(curFrame, 0, 0, m_param.sourceWidth, m_param.sourceHeight, Y);
+    quadtree(curFrame, 0, 0, m_param.sourceWidth >> 1, m_param.sourceHeight >> 1, U);
+    quadtree(curFrame, 0, 0, m_param.sourceWidth >> 1, m_param.sourceHeight >> 1, V);
 
     return 0;
 }
