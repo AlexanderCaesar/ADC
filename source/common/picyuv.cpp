@@ -174,6 +174,57 @@ void PicYuv::copyFromPicture(const adc_picture& pic, const adc_param& param)
     }
 }
 
+/* padPicture.*/
+void PicYuv::padPicture(const adc_param& param)
+{
+    uint32_t width = m_picWidth;
+    uint32_t height = m_picHeight;
+
+    pixel *Y = m_picBuf[0];
+    pixel *U = m_picBuf[1];
+    pixel *V = m_picBuf[2];
+
+    /* extend the top edge */
+    for (uint32_t x = 0; x < (m_picWidth + m_marginX); x++)
+    {
+        Y[x] = 128;
+    }
+
+    /* extend the left edge */
+    for (uint32_t y = 0; y < (m_picHeight + m_marginY); y++)
+    {
+        Y[0] = 128;
+        Y += m_stride;
+    }
+
+    /* extend the top edge */
+    for (uint32_t x = 0; x < ((m_picWidth >> m_hChromaShift) + m_marginX); x++)
+    {
+        U[x] = 128;
+    }
+
+    /* extend the left edge */
+    for (uint32_t y = 0; y < ((m_picHeight >> m_vChromaShift) + m_marginY); y++)
+    {
+        U[0] = 128;
+        U += m_strideC;
+    }
+
+
+    /* extend the top edge */
+    for (uint32_t x = 0; x < ((m_picWidth >> m_hChromaShift) + m_marginX); x++)
+    {
+        V[x] = 128;
+    }
+
+    /* extend the left edge */
+    for (uint32_t y = 0; y < ((m_picHeight >> m_vChromaShift) + m_marginY); y++)
+    {
+        V[0] = 128;
+        V += m_strideC;
+    }
+}
+
 
 void PicYuv::destroy()
 {

@@ -25,15 +25,23 @@ public:
     /* Data associated with adc_picture */
     PicYuv*                m_fencPic;            
     int                    m_poc;                
-    int                    m_encodeOrder;
     int64_t                m_pts;                //user provided presentation time stamp
-    int64_t                m_reorderedPts;       //
     int64_t                m_dts;                //
 
 
     Frame*                 m_next;               // PicList doubly linked list pointers
     Frame*                 m_prev;
     adc_param*             m_param;              // Points to the latest param set for the frame.
+
+    uint32_t*              m_partition[3];  
+    uint32_t*              m_direction[3];
+    uint32_t*              m_residual[3];
+
+    uint32_t               m_part_len[3];
+    uint32_t               m_dir_len[3];
+    uint32_t               m_res_len[3];
+
+
 
     int64_t                m_encodeStartTime;
     int                    m_bHasReferences;    /* used during DPB updates */

@@ -150,6 +150,10 @@ int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
 
     int split = (mode - min > m_param.et) || (max - mode > m_param.et);
 
+    if (width > 1 && height > 1)
+    {
+        curFrame->m_partition[yuv][curFrame->m_part_len[yuv]++] = split;
+    }
     if (!split)
     {
         return 0;
@@ -168,7 +172,7 @@ int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
             quadtree(curFrame, XX, YY, www, hhh, yuv);
 
         }
-        return 1;
+        return 0;
     }
 }
 
@@ -208,6 +212,12 @@ int Encoder::encode(const adc_picture* pic_in, adc_picture* pic_out)
         {
             inFrame = m_dpb->m_freeList.popBack();
             inFrame->m_encodeStartTime = time_mdate();
+            for (int i = 0; i < 3; i++)
+            {
+                inFrame->m_part_len[i] = 0;
+                inFrame->m_dir_len[i] = 0;
+                inFrame->m_res_len[i] = 0;
+            }
         }
 
         /* Copy input picture into a Frame and PicYuv, send to lookahead */

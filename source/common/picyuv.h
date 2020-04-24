@@ -43,5 +43,6 @@ public:
     void  destroy();
 
     void  copyFromPicture(const adc_picture&, const adc_param& param);
+    void  padPicture(const adc_param& param);
 
 };
