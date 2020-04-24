@@ -140,8 +140,22 @@ void Encoder::getStreamHeaders(NALList& list, Entropy& entropy, Bitstream& bs)
         m_stats.accBits += list.m_nal[i].sizeBytes<<3;//*8
     }
 }
+
+int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, uint32_t height, uint32_t, YUVType yuv)
+{
+    return 0;
+}
+int Encoder::compressFrame()
+{
+    Frame* curFrame = m_dpb->m_picList.first();
+    if (!curFrame)
+        return -1;
+
+    return 0;
+}
 int Encoder::encode(const adc_picture* pic_in, adc_picture* pic_out)
 {
+    int ret = -1;
     if (pic_in)
     {
         Frame *inFrame;
@@ -151,7 +165,7 @@ int Encoder::encode(const adc_picture* pic_in, adc_picture* pic_out)
             inFrame = new Frame;
             inFrame->m_encodeStartTime = time_mdate();
 
-            if (inFrame->create(&m_param))//ÉêÇëframe¿Õ¼ä
+            if (inFrame->create(&m_param))
             {
                 ERR("memory allocation failure, aborting encode\n");
                 inFrame->destroy();
@@ -172,12 +186,15 @@ int Encoder::encode(const adc_picture* pic_in, adc_picture* pic_out)
         inFrame->m_poc = ++m_poc;
         inFrame->m_pts = pic_in->pts;
 
+        m_dpb->prepareEncode(inFrame);
 
+        ret = compressFrame();
 
+        m_dpb->recycleUnreferenced();
     }
     else
     {
         //to be added
     }
-    return 0;
+    return ret;
 }

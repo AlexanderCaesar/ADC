@@ -31,6 +31,13 @@ typedef enum
     NAL_FRAME,
 } NalUnitType;
 
+typedef enum
+{
+    Y = 0,
+    U,
+    V
+} YUVType;
+
 /* The data within the payload is already NAL-encapsulated; the type is merely
  * in the struct for easy access by the calling application.  All data returned
  * in an adc_nal, including the data in payload, is no longer valid after the
@@ -153,7 +160,7 @@ int         adc_decoder_headers(adc_decoder* dec, adc_nal *nal);
 int         adc_decoder_decode(adc_decoder* dec,adc_nal *nal);
 
 
-#define ADC_BUILD "0.1.5"
+#define ADC_BUILD "0.1.6"
 
 #ifdef __cplusplus
 }

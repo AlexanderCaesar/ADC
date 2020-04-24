@@ -28,7 +28,8 @@ public:
 
     ~DPB();
 
-    void DPB::prepareEncode(Frame *newFrame);
+    void prepareEncode(Frame *newFrame);
+    void recycleUnreferenced();
 
 };
 

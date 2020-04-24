@@ -36,6 +36,7 @@ public:
     adc_param*             m_param;              // Points to the latest param set for the frame.
 
     int64_t                m_encodeStartTime;
+    int                    m_bHasReferences;    /* used during DPB updates */
 
     Frame();
 
