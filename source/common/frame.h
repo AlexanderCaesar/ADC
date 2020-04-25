@@ -35,7 +35,7 @@ public:
 
     uint32_t*              m_partition[3];  
     uint32_t*              m_direction[3];
-    uint32_t*              m_residual[3];
+    int32_t*               m_residual[3];
 
     uint32_t               m_part_len[3];
     uint32_t               m_dir_len[3];

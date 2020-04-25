@@ -55,7 +55,7 @@ int Frame::create(adc_param *param)
     {
         m_partition[i] = (uint32_t*)malloc(m_param->sourceWidth * m_param->sourceHeight*sizeof(uint32_t));
         m_direction[i] = (uint32_t*)malloc(m_param->sourceWidth * m_param->sourceHeight*sizeof(uint32_t));
-        m_residual[i] = (uint32_t*)malloc(m_param->sourceWidth * m_param->sourceHeight*sizeof(uint32_t));
+        m_residual[i] = (int32_t*)malloc(m_param->sourceWidth * m_param->sourceHeight*sizeof(int32_t));
     }
 
     return 0;

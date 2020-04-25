@@ -174,9 +174,9 @@ int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
             curFrame->m_direction[yuv][curFrame->m_dir_len[yuv]++] = direction;
         }
 
+        curFrame->m_residual[yuv][curFrame->m_res_len[yuv]++] = mode - ref_mode;
+
         curFrame->m_reconPic->copyModePixel(X, Y, width,  height, yuv,  mode);
-
-
 
         return 0;
     }
