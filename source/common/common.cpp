@@ -227,6 +227,24 @@ int calBoderMode(pixel *src, uint32_t X, uint32_t Y, uint32_t width, uint32_t he
     }
 }
 
+/*cal directions.*/
+int calDirection(pixel *rec, int mode, uint32_t width, uint32_t height, uint32_t stride, uint32_t& direction)
+{
+    int left = (int)rec[ (height/2)*stride-1]; //middle-bottom
+    int top = (int)rec[width / 2 - stride];    //middle-right
+
+    if (abs(left - mode) < abs(top - mode))
+    {
+        direction = 0;
+        return left;
+    }
+    else
+    {
+        direction = 1;
+        return top;
+    }
+}
+
 int calCUMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride, int& min, int& max)
 {
     for (int i = 0; i < 256; i++)
@@ -272,3 +290,4 @@ int calCUMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride, int&
     }
     return mode;
 }
+
