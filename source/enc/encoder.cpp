@@ -89,6 +89,46 @@ int adc_encoder_encode(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal, adc
     Encoder *encoder = static_cast<Encoder*>(enc);
     int numEncoded = encoder->encode(pic_in, pic_out);
 
+    Entropy entropy;
+    Bitstream bs;
+
+    lbac_t lbac_enc;
+    lbac_t *lbac = &lbac_enc;
+    lbac_reset(lbac);
+    com_lbac_ctx_init(&lbac->h);
+
+    com_lbac_all_ctx_t *lbac_ctx = &lbac->h;
+
+    lbac_ctx_model_t* ctx = &lbac->h.part_split_flag;
+
+    lbac_encode_bin(0, lbac, ctx, &bs);
+    lbac_encode_bin(0, lbac, ctx, &bs);
+    lbac_encode_bin(0, lbac, ctx, &bs);
+    lbac_encode_bin(0, lbac, ctx, &bs);
+    lbac_encode_bin(0, lbac, ctx, &bs);
+    lbac_encode_bin(0, lbac, ctx, &bs);
+    lbac_encode_bin(0, lbac, ctx, &bs);
+    lbac_encode_bin(1, lbac, ctx, &bs);
+    lbac_encode_bin(0, lbac, ctx, &bs);
+
+    bs.writeByteAlignment();
+
+    NALList            nallist;
+    nallist.serialize(NAL_FRAME, bs);
+
+    adc_nal *pp = &nallist.m_nal[0];
+
+
+
+
+    entropy.setBitstream(&bs);
+
+    bs.resetBits();
+
+
+    bs.writeByteAlignment();
+
+
     {
         //to be done
     }
