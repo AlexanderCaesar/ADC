@@ -159,22 +159,72 @@ static string GetOsVersion()
 
 static uint32_t modecount[256];
 /*The mode is that value that is repeated most often in the data set.*/
-pixel calBoderMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride)
+int calBoderMode(pixel *src, uint32_t X, uint32_t Y, uint32_t width, uint32_t height, uint32_t stride)
 {
+    uint32_t all_ref_pixels = 0;
+
+    if (!X&&!Y)
+    {
+        all_ref_pixels = 0;
+        return 128;
+    }
+
     for (int i = 0; i < 256; i++)
         modecount[i] = 0;
 
-    for (uint32_t i = 0; i < width; i++)
+    if (X > 0) // left
     {
-        modecount[src[i]]++;
-    }
-    for (uint32_t i = 0; i < height; i++)
-    {
-        modecount[src[i*stride]]++;
+        pixel* left = src - 1;
+
+        for (uint32_t i = 0; i < height; i++)
+        {
+            modecount[left[i*stride]]++;
+        }
+
+        all_ref_pixels += height;
     }
 
-    //to be added
-    return 0;
+    if (Y > 0) //top
+    {
+        pixel* top = src - stride;
+
+        for (uint32_t i = 0; i < width; i++)
+        {
+            modecount[top[i]]++;
+        }
+
+        all_ref_pixels += width;
+    }
+
+    if (X > 0 && Y > 0) //top-left
+    {
+        pixel* top_left = src - stride - 1;
+
+        modecount[top_left[0]]++;
+
+        all_ref_pixels += 1;
+    }
+
+    uint32_t max_cout = 0;
+    int      mode = 0;
+
+    for (int i = 0; i < 256; i++)
+    {
+        if (modecount[i] > max_cout)
+        {
+            max_cout = modecount[i];
+            mode = i;
+        }
+    }
+
+    if (max_cout > all_ref_pixels / 2)
+    {
+        return mode;
+    }
+    else
+    {
+        return -1;
+    }
 }
 
 int calCUMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride, int& min, int& max)
@@ -192,7 +242,7 @@ int calCUMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride, int&
         src += stride;
     }
     uint32_t max_cout = 0;
-    pixel    mode = 0;
+    int      mode = 0;
 
     for (int i = 0; i < 256; i++)
     {

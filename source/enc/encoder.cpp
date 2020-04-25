@@ -158,6 +158,10 @@ int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
     }
     if (!split)
     {
+        pixel* rec = curFrame->m_reconPic->m_picOrg[yuv] + Y*curFrame->m_fencPic->m_stride[yuv] + X;
+
+        int ref_mode = calBoderMode(rec, X, Y, width, height, curFrame->m_fencPic->m_stride[yuv]);
+
         return 0;
     }
     else
