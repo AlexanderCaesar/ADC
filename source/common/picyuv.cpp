@@ -92,6 +92,20 @@ int PicYuv::create(adc_param* param)
     return 0;
 }
 
+/* Copy pixels from Mode into internal PicYuv instance.*/
+void PicYuv::copyModePixel(uint32_t X, uint32_t Y, uint32_t width, uint32_t height, YUVType yuv, int mode)
+{
+    pixel* dst = m_picOrg[yuv] + Y*m_stride[yuv] +X;
+    for (uint32_t h = 0; h < height; h++)
+    {
+        for (uint32_t w = 0; w < width; w++)
+        {
+            memset(dst, (pixel)mode, width * sizeof(pixel));
+        }
+        dst += m_stride[yuv];
+    }
+}
+
 /* Copy pixels from an adc_picture into internal PicYuv instance.*/
 void PicYuv::copyFromPicture(const adc_picture& pic, const adc_param& param)
 {

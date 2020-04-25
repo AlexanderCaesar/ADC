@@ -41,6 +41,7 @@ public:
 
     void  destroy();
 
+    void  copyModePixel(uint32_t X, uint32_t Y, uint32_t width, uint32_t height, YUVType yuv,  int mode);
     void  copyFromPicture(const adc_picture&, const adc_param& param);
     void  padPicture(const adc_param& param);
 
