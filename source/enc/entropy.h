@@ -31,6 +31,7 @@ typedef int16_t lbac_ctx_model_t;
 typedef struct uavs3e_com_lbac_all_ctx_t {
     lbac_ctx_model_t   part_split_flag;
     lbac_ctx_model_t   dir_flag;
+    lbac_ctx_model_t   sign_flag;
     lbac_ctx_model_t   res;
 } com_lbac_all_ctx_t;
 
@@ -60,5 +61,22 @@ public:
 
 void com_lbac_ctx_init(com_lbac_all_ctx_t *lbac_ctx);
 void lbac_reset(lbac_t *lbac);
-void lbac_finish(lbac_t *lbac, Bitstream  *bs);
 void lbac_encode_bin(uint32_t bin, lbac_t *lbac, lbac_ctx_model_t *model, Bitstream  *bs);
+void lbac_finish(lbac_t *lbac, Bitstream  *bs);
+
+
+/*************************  CABAC ******************************************************/
+#define PROB_LPS_BITS                     8
+
+#define HALF_RANGE                        ( 1 << (PROB_LPS_BITS) )           //  256
+#define MAX_LPS_RANGE                     ((1 << (PROB_LPS_BITS    )) - 1)   //  255
+#define MAX_RANGE                         ((1 << (PROB_LPS_BITS + 1)) - 1)   //  511
+
+typedef struct uavs3d_com_lbac_t {
+    int32_t  range, low;
+    uint8_t  *cur, *end;
+    com_lbac_all_ctx_t ctx;
+} com_lbac_t;
+
+void lbac_dec_init(com_lbac_t *lbac, uint8_t *cur, uint8_t* end);
+uint8_t decode_split_flag(com_lbac_t * lbac);

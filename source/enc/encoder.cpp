@@ -99,9 +99,9 @@ int adc_encoder_encode(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal, adc
 
     com_lbac_all_ctx_t *lbac_ctx = &lbac->h;
 
-    lbac_ctx_model_t* ctx = &lbac->h.part_split_flag;
+    lbac_ctx_model_t* ctx = &(lbac->h.part_split_flag);
 
-    lbac_encode_bin(0, lbac, ctx, &bs);
+    lbac_encode_bin(1, lbac, ctx, &bs);
     lbac_encode_bin(0, lbac, ctx, &bs);
     lbac_encode_bin(0, lbac, ctx, &bs);
     lbac_encode_bin(0, lbac, ctx, &bs);
@@ -110,13 +110,35 @@ int adc_encoder_encode(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal, adc
     lbac_encode_bin(0, lbac, ctx, &bs);
     lbac_encode_bin(1, lbac, ctx, &bs);
     lbac_encode_bin(0, lbac, ctx, &bs);
+    lbac_encode_bin(0, lbac, ctx, &bs);
 
+    lbac_finish(lbac, &bs);
     bs.writeByteAlignment();
 
     NALList            nallist;
     nallist.serialize(NAL_FRAME, bs);
 
     adc_nal *pp = &nallist.m_nal[0];
+
+
+    uint8_t        *cur, *end;
+    com_lbac_t     lbac_dec;
+
+    cur = pp->payload + 4 + 1;
+    end = pp->payload + pp->sizeBytes -1;
+
+    lbac_dec_init(&lbac_dec, cur, end);
+    com_lbac_ctx_init(&(lbac_dec.ctx));
+
+    uint8_t split_flag = 0;
+    for (int i = 0; i < 10; i++)
+    {
+        split_flag = decode_split_flag(&lbac_dec);
+        printf("%d: %d\n", i, split_flag);
+    }
+
+
+
 
 
 

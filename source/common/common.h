@@ -18,6 +18,9 @@ typedef uint8_t  pixel;
 #define CHROMA_H_SHIFT(x) (x == ADC_CSP_I420 || x == ADC_CSP_I422)
 #define CHROMA_V_SHIFT(x) (x == ADC_CSP_I420)
 
+#define COM_MAX(a,b)                   (((a) > (b)) ? (a) : (b))
+#define COM_MIN(a,b)                   (((a) < (b)) ? (a) : (b))
+
 #define com_mset(dst,v,size)      memset((dst), (v), (size))
 
 void BuildLogFilePath(const char *path);
