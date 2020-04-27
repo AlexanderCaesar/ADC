@@ -1196,6 +1196,7 @@ static tab_s16 tbl_plps_dec[4 * 4096] = {
     14228, 14229, 14230, 14231, 14232, 14233, 14234, 14235, 14236, 14237, 14238, 14239, 14240, 14241, 14242, 14243, 14244, 14245, 14246, 14247, 14248, 14249, 14250, 14251, 14252, 14253, 14254, 14255, 14256, 14257, 14258, 14259
 };
 
+tab_s16 * const tbl_plps_base = tbl_plps_dec + 2048;
 
 #define PROB_LPS_SHIFTNO                  2
 #define CABAC_BITS                       16
@@ -1248,7 +1249,7 @@ static uint32_t lbac_dec_bin_inline(com_lbac_t * lbac, lbac_ctx_model_t * model)
     lbac->range += (rMPS - lbac->range) & (~lps_mask);
 
     s ^= lps_mask;
-    *model = tbl_plps_dec[(int)(RangeLPS & 0xf000) + s];
+    *model = tbl_plps_base[(int)(RangeLPS & 0xf000) + s];
 
     bin = s & 1;
 
