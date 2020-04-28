@@ -531,29 +531,6 @@ static tab_s16 tbl_plps[1 << 14] = {
 
 static tab_s16 *tbl_plps_ext = tbl_plps + (1 << 13);
 
-void lbac_reset(lbac_t *lbac)
-{
-    lbac->range = 0x1FF;
-    lbac->code = 0;
-    lbac->left_bits = 23;
-    lbac->pending_byte = 0;
-    lbac->is_pending_byte = 0;
-    lbac->stacked_ff = 0;
-}
-
-void com_lbac_ctx_init(com_lbac_all_ctx_t *lbac_ctx)
-{
-    com_mset(lbac_ctx, 0x00, sizeof(*lbac_ctx));
-
-    /* Initialization of the context models */
-    int num = sizeof(com_lbac_all_ctx_t) / sizeof(lbac_ctx_model_t);
-    lbac_ctx_model_t *p = (lbac_ctx_model_t *)lbac_ctx;
-
-    for (int i = 0; i < num; i++) {
-        p[i] = PROB_INIT;
-    }
-}
-
 static void put_byte(uint8_t writing_byte, lbac_t *lbac, Bitstream *bs)
 {
     if (lbac->is_pending_byte) {
@@ -599,7 +576,12 @@ static int get_shift(int v)
 #endif
 }
 
-void lbac_encode_bin(uint32_t bin, lbac_t *lbac, lbac_ctx_model_t *model, Bitstream  *bs)
+Entropy::Entropy()
+{
+    lbac_reset();
+}
+
+void Entropy::lbac_encode_bin(uint32_t bin, lbac_t *lbac, lbac_ctx_model_t *model, Bitstream  *bs)
 {
     uint16_t cmps = (*model) & 1;
     uint32_t rLPS = ((*model) & PROB_MASK) >> (LG_PMPS_SHIFTNO + 1);
@@ -630,7 +612,7 @@ void lbac_encode_bin(uint32_t bin, lbac_t *lbac, lbac_ctx_model_t *model, Bitstr
     }
 }
 
-void lbac_finish(lbac_t *lbac, Bitstream  *bs)
+void Entropy::lbac_finish(lbac_t *lbac, Bitstream  *bs)
 {
     if (lbac->code >> (32 - lbac->left_bits)) {
         bs->write(lbac->pending_byte + 1, 8);
@@ -649,13 +631,7 @@ void lbac_finish(lbac_t *lbac, Bitstream  *bs)
             lbac->stacked_ff--;
         }
     }
-    uint32_t   oricode = lbac->code;
     lbac->code |= (1 << 7);
-    if (oricode != lbac->code)
-    {
-        int a = 0;
-        a++;
-    }
     bs->write(lbac->code >> 8, 24 - lbac->left_bits);
 
     if ((24 - lbac->left_bits) % 8) {
@@ -663,10 +639,28 @@ void lbac_finish(lbac_t *lbac, Bitstream  *bs)
     }
 }
 
-Entropy::Entropy()
+void Entropy::com_lbac_ctx_init(com_lbac_all_ctx_t *lbac_ctx)
 {
+    com_mset(lbac_ctx, 0x00, sizeof(*lbac_ctx));
+
+    /* Initialization of the context models */
+    int num = sizeof(com_lbac_all_ctx_t) / sizeof(lbac_ctx_model_t);
+    lbac_ctx_model_t *p = (lbac_ctx_model_t *)lbac_ctx;
+
+    for (int i = 0; i < num; i++) {
+        p[i] = PROB_INIT;
+    }
 }
 
+void Entropy::lbac_reset()
+{
+    lbac_enc.range = 0x1FF;
+    lbac_enc.code = 0;
+    lbac_enc.left_bits = 23;
+    lbac_enc.pending_byte = 0;
+    lbac_enc.is_pending_byte = 0;
+    lbac_enc.stacked_ff = 0;
+}
 void Entropy::codeVPS(adc_param *p)
 {
     WRITE_UVLC(p->sourceHeight, "pic_width_in_luma_samples");

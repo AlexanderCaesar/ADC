@@ -63,9 +63,8 @@ int adc_encoder_headers(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal)
         Encoder *encoder = static_cast<Encoder*>(enc);
 
         Entropy entropy;
-        Bitstream bs;
 
-        encoder->getStreamHeaders(encoder->m_nalList, entropy, bs);
+        encoder->getStreamHeaders(encoder->m_nalList, entropy);
         *pp_nal = &encoder->m_nalList.m_nal[0];
         if (pi_nal) *pi_nal = encoder->m_nalList.m_numNal;
 
@@ -87,94 +86,50 @@ int adc_encoder_encode(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal, adc
         return -1;
 
     Encoder *encoder = static_cast<Encoder*>(enc);
-    int numEncoded = encoder->encode(pic_in, pic_out);
 
-    for (int t = 65536; t <= 16777126;t++)
-    {
-        Entropy entropy;
-        Bitstream bs;
+    Entropy entropy;
 
-        lbac_t lbac_enc;
-        lbac_t *lbac = &lbac_enc;
-        lbac_reset(lbac);
-        com_lbac_ctx_init(&lbac->h);
-
-        com_lbac_all_ctx_t *lbac_ctx = &lbac->h;
-
-        lbac_ctx_model_t* ctx = &(lbac->h.part_split_flag);
-
-        uint8_t temp = t;
-        for (int i = 0; i < 24; i++)
-        {
-            lbac_encode_bin(temp%2, lbac, ctx, &bs);
-            temp = temp>>1;
-        }
-
-        //lbac_encode_bin(0, lbac, ctx, &bs);
-        //lbac_encode_bin(0, lbac, ctx, &bs);
-        //lbac_encode_bin(0, lbac, ctx, &bs);
-        //lbac_encode_bin(0, lbac, ctx, &bs);
-        //lbac_encode_bin(0, lbac, ctx, &bs);
-        //lbac_encode_bin(0, lbac, ctx, &bs);
-        //lbac_encode_bin(1, lbac, ctx, &bs);
-        //lbac_encode_bin(0, lbac, ctx, &bs);
+    int numEncoded = encoder->encode(pic_in, pic_out, entropy);
 
 
-        lbac_finish(lbac, &bs);
-        bs.writeByteAlignment();
-
-        NALList            nallist;
-        nallist.serialize(NAL_FRAME, bs);
-
-        adc_nal *pp = &nallist.m_nal[0];
 
 
-        uint8_t        *cur, *end;
-        com_lbac_t     lbac_dec;
+    lbac_t lbac_enc;
+    lbac_t *lbac = &lbac_enc;
+    //lbac_reset(lbac);
+    //com_lbac_ctx_init(&lbac->h);
 
-        cur = pp->payload + 4 + 1;
-        end = pp->payload + pp->sizeBytes;
+    com_lbac_all_ctx_t *lbac_ctx = &lbac->h;
 
-        lbac_dec_init(&lbac_dec, cur, end);
-        com_lbac_ctx_init(&(lbac_dec.ctx));
-
-        uint8_t split_flag = 0;
-        temp = t;
-        int diff = 0;
-        uint8_t aaa[20];
-        for (int i = 0; i < 24; i++)
-        {
-            split_flag = decode_split_flag(&lbac_dec);
-            aaa[i] = split_flag;
-            if (split_flag != temp % 2)
-            {
-                diff = 1;
-            }
-            temp = temp >> 1;
-
-        }
-        if (diff)
-        {
-            temp = t;
-            static int num = 0;
-            FILE *fp = fopen("cabac_bug3.txt", "a");
-            fprintf(fp, "============%3d===========\n", num++);
-            for (int i = 0; i < 24; i++)
-            {
-                fprintf(fp,"%d: %d %d\n", i, temp % 2, aaa[i]);
-                temp = temp >> 1;
-            }
-            fclose(fp);
-        }
-    }
-   
-
-    //entropy.setBitstream(&bs);
-
-    //bs.resetBits();
+    lbac_ctx_model_t* ctx = &(lbac->h.part_split_flag);
 
 
+    //lbac_encode_bin(0, lbac, ctx, &bs);
+
+
+    //lbac_finish(lbac, &bs);
     //bs.writeByteAlignment();
+
+
+ /*   adc_nal *pp = &nallist.m_nal[0];
+
+
+    uint8_t        *cur, *end;
+    com_lbac_t     lbac_dec;
+
+    cur = pp->payload + 4 + 1;
+    end = pp->payload + pp->sizeBytes;
+
+    lbac_dec_init(&lbac_dec, cur, end);
+    com_lbac_ctx_init(&(lbac_dec.ctx));
+
+    uint8_t split_flag = 0;
+
+    for (int i = 0; i < 8; i++)
+    {
+        split_flag = decode_split_flag(&lbac_dec);
+    }*/
+
 
 
     {
@@ -198,6 +153,7 @@ Encoder::Encoder()
     m_stats.accBits = 0;
     m_stats.encodedPictureCount = 0;
     m_dpb = NULL;
+    m_bs.resetBits();
 
 }
 
@@ -215,14 +171,14 @@ void Encoder::printSummary()
     INF("SUMMARY");
 }
 
-void Encoder::getStreamHeaders(NALList& list, Entropy& entropy, Bitstream& bs)
+void Encoder::getStreamHeaders(NALList& list, Entropy& entropy)
 {
-    entropy.setBitstream(&bs);
+    entropy.setBitstream(&m_bs);
 
-    bs.resetBits();
+    m_bs.resetBits();
     entropy.codeVPS(&m_param);
-    bs.writeByteAlignment();
-    list.serialize(NAL_VPS, bs);
+    m_bs.writeByteAlignment();
+    list.serialize(NAL_VPS, m_bs);
 
     for (uint32_t i = 0; i < list.m_numNal; i++)
     {
@@ -230,7 +186,7 @@ void Encoder::getStreamHeaders(NALList& list, Entropy& entropy, Bitstream& bs)
     }
 }
 
-int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, uint32_t height,  YUVType yuv)
+int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, uint32_t height, YUVType yuv, Entropy& entropy, Bitstream& bs)
 {
     int min = 0; 
     int max = 0;
@@ -280,27 +236,42 @@ int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
             uint32_t www = ww + (width % 2) * (subPartIdx >> 1);
             uint32_t hhh = hh + (height % 2) * (subPartIdx & 1);
 
-            quadtree(curFrame, XX, YY, www, hhh, yuv);
+            quadtree(curFrame, XX, YY, www, hhh, yuv, entropy, bs);
 
         }
         return 0;
     }
 }
 
-int Encoder::compressFrame()
+int Encoder::compressFrame(Entropy& entropy, Bitstream& bs)
 {
     Frame* curFrame = m_dpb->m_picList.first();
     if (!curFrame)
         return -1;
 
-    quadtree(curFrame, 0, 0, m_param.sourceWidth, m_param.sourceHeight, Y);
-    quadtree(curFrame, 0, 0, m_param.sourceWidth >> 1, m_param.sourceHeight >> 1, U);
-    quadtree(curFrame, 0, 0, m_param.sourceWidth >> 1, m_param.sourceHeight >> 1, V);
+    entropy.setBitstream(&bs);
+    bs.resetBits();
+    entropy.lbac_reset();
+    entropy.com_lbac_ctx_init(&(entropy.lbac_enc.h));
+
+    quadtree(curFrame, 0, 0, m_param.sourceWidth, m_param.sourceHeight, Y, entropy, bs);
+    quadtree(curFrame, 0, 0, m_param.sourceWidth >> 1, m_param.sourceHeight >> 1, U, entropy, bs);
+    quadtree(curFrame, 0, 0, m_param.sourceWidth >> 1, m_param.sourceHeight >> 1, V, entropy, bs);
+
+    entropy.lbac_finish(&entropy.lbac_enc, &bs);
+    bs.writeByteAlignment();
+
+    m_nalList.serialize(NAL_FRAME, bs);
+
+    for (uint32_t i = 0; i < m_nalList.m_numNal; i++)
+    {
+        m_stats.accBits += m_nalList.m_nal[i].sizeBytes << 3;//*8
+    }
 
     return 0;
 }
 
-int Encoder::encode(const adc_picture* pic_in, adc_picture* pic_out)
+int Encoder::encode(const adc_picture* pic_in, adc_picture* pic_out, Entropy& entropy)
 {
     int ret = -1;
     if (pic_in)
@@ -341,7 +312,7 @@ int Encoder::encode(const adc_picture* pic_in, adc_picture* pic_out)
 
         m_dpb->prepareEncode(inFrame);
 
-        ret = compressFrame();
+        ret = compressFrame(entropy,m_bs);
 
         m_dpb->recycleUnreferenced();
     }

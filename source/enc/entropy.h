@@ -51,18 +51,19 @@ class Entropy : public SyntaxElementWriter
 {
 public:
 
+    lbac_t lbac_enc;
+
     Entropy();
 
+    void com_lbac_ctx_init(com_lbac_all_ctx_t *lbac_ctx);
+    void lbac_reset();
     void setBitstream(Bitstream* p)    { m_bitIf = p; }
 
+    void lbac_encode_bin(uint32_t bin, lbac_t *lbac, lbac_ctx_model_t *model, Bitstream  *bs);
+    void lbac_finish(lbac_t *lbac, Bitstream  *bs);
+
     void codeVPS(adc_param *p);
-
 };
-
-void com_lbac_ctx_init(com_lbac_all_ctx_t *lbac_ctx);
-void lbac_reset(lbac_t *lbac);
-void lbac_encode_bin(uint32_t bin, lbac_t *lbac, lbac_ctx_model_t *model, Bitstream  *bs);
-void lbac_finish(lbac_t *lbac, Bitstream  *bs);
 
 
 /*************************  CABAC ******************************************************/
