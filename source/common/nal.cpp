@@ -22,6 +22,15 @@ NALList::NALList()
     , m_extraAllocSize(0)
     , m_annexB(true)
 {}
+
+void NALList::reset()
+{
+    m_numNal = 0;
+    m_occupancy = 0;
+    m_extraOccupancy = 0;
+    m_extraAllocSize = 0;
+
+}
 void NALList::serialize(NalUnitType nalUnitType, const Bitstream& bs)
 {
     static const char startCodePrefix[] = { 0, 0, 0, 1 };

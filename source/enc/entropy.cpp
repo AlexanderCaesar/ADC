@@ -668,6 +668,43 @@ void Entropy::codeVPS(adc_param *p)
     WRITE_UVLC(p->chromaFormat, "chroma_format_idc");
 }
 
+void Entropy::codeSplit(uint32_t val)
+{
+    lbac_ctx_model_t* ctx = &(lbac_enc.h.part_split_flag);
+    Bitstream *bs = static_cast<Bitstream*>(m_bitIf);
+    lbac_encode_bin(val, &lbac_enc, ctx, bs);
+}
+
+void Entropy::codeDirection(uint32_t val)
+{
+    lbac_ctx_model_t* ctx = &(lbac_enc.h.dir_flag);
+    Bitstream *bs = static_cast<Bitstream*>(m_bitIf);
+    lbac_encode_bin(val, &lbac_enc, ctx, bs);
+}
+
+void Entropy::codeDirRes(int32_t val)
+{
+    lbac_ctx_model_t* sin_ctx = &(lbac_enc.h.sign_flag);
+    lbac_ctx_model_t* res_ctx = &(lbac_enc.h.res);
+    Bitstream *bs = static_cast<Bitstream*>(m_bitIf);
+    uint32_t v = abs(val);
+
+    for (uint32_t i = 0; i < v; i++)
+    {
+        lbac_encode_bin(0, &lbac_enc, res_ctx, bs);
+    }
+    lbac_encode_bin(1, &lbac_enc, res_ctx, bs);
+
+    if (val > 0)
+    {
+        lbac_encode_bin(0, &lbac_enc, sin_ctx, bs);
+    }
+    else if (val < 0 )
+    {
+        lbac_encode_bin(1, &lbac_enc, sin_ctx, bs);
+    }
+}
+
 void lbac_dec_init(com_lbac_t *lbac, uint8_t *cur, uint8_t* end)
 {
     lbac->range = MAX_RANGE;

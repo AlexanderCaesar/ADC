@@ -63,6 +63,9 @@ public:
     void lbac_finish(lbac_t *lbac, Bitstream  *bs);
 
     void codeVPS(adc_param *p);
+    void codeSplit(uint32_t val);
+    void codeDirection(uint32_t val);
+    void codeDirRes(int32_t val);
 };
 
 

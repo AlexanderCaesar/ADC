@@ -91,24 +91,15 @@ int adc_encoder_encode(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal, adc
 
     int numEncoded = encoder->encode(pic_in, pic_out, entropy);
 
+    if (pp_nal && numEncoded > 0)
+    {
+        *pp_nal = &encoder->m_nalList.m_nal[0];
+        if (pi_nal) *pi_nal = encoder->m_nalList.m_numNal;
+    }
+    else if (pi_nal)
+        *pi_nal = 0;
 
-
-
-    lbac_t lbac_enc;
-    lbac_t *lbac = &lbac_enc;
-    //lbac_reset(lbac);
-    //com_lbac_ctx_init(&lbac->h);
-
-    com_lbac_all_ctx_t *lbac_ctx = &lbac->h;
-
-    lbac_ctx_model_t* ctx = &(lbac->h.part_split_flag);
-
-
-    //lbac_encode_bin(0, lbac, ctx, &bs);
-
-
-    //lbac_finish(lbac, &bs);
-    //bs.writeByteAlignment();
+    return numEncoded;
 
 
  /*   adc_nal *pp = &nallist.m_nal[0];
@@ -129,14 +120,6 @@ int adc_encoder_encode(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal, adc
     {
         split_flag = decode_split_flag(&lbac_dec);
     }*/
-
-
-
-    {
-        //to be done
-    }
-
-    return -1;
 }
 
 Encoder::Encoder()
@@ -186,7 +169,7 @@ void Encoder::getStreamHeaders(NALList& list, Entropy& entropy)
     }
 }
 
-int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, uint32_t height, YUVType yuv, Entropy& entropy, Bitstream& bs)
+int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, uint32_t height, YUVType yuv, Entropy& entropy)
 {
     int min = 0; 
     int max = 0;
@@ -199,11 +182,12 @@ int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
     pixel* src = curFrame->m_fencPic->m_picOrg[yuv] + Y*curFrame->m_fencPic->m_stride[yuv] + X;
     int mode = calCUMode(src, width, height, curFrame->m_fencPic->m_stride[yuv], min, max);
 
-    int split = (mode - min > m_param.et) || (max - mode > m_param.et);
+    uint32_t split = (mode - min > m_param.et) || (max - mode > m_param.et);
 
     if (width > 1 && height > 1)
     {
         curFrame->m_partition[yuv][curFrame->m_part_len[yuv]++] = split;
+        entropy.codeSplit(split);
     }
     if (!split)
     {
@@ -216,10 +200,11 @@ int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
         {
             ref_mode = calDirection(rec, mode, width, height, curFrame->m_fencPic->m_stride[yuv], direction);
             curFrame->m_direction[yuv][curFrame->m_dir_len[yuv]++] = direction;
+            entropy.codeDirection(split);
         }
 
         curFrame->m_residual[yuv][curFrame->m_res_len[yuv]++] = mode - ref_mode;
-
+        entropy.codeDirRes(mode - ref_mode);
         curFrame->m_reconPic->copyModePixel(X, Y, width,  height, yuv,  mode);
 
         return 0;
@@ -236,7 +221,7 @@ int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
             uint32_t www = ww + (width % 2) * (subPartIdx >> 1);
             uint32_t hhh = hh + (height % 2) * (subPartIdx & 1);
 
-            quadtree(curFrame, XX, YY, www, hhh, yuv, entropy, bs);
+            quadtree(curFrame, XX, YY, www, hhh, yuv, entropy);
 
         }
         return 0;
@@ -253,10 +238,11 @@ int Encoder::compressFrame(Entropy& entropy, Bitstream& bs)
     bs.resetBits();
     entropy.lbac_reset();
     entropy.com_lbac_ctx_init(&(entropy.lbac_enc.h));
+    m_nalList.reset();
 
-    quadtree(curFrame, 0, 0, m_param.sourceWidth, m_param.sourceHeight, Y, entropy, bs);
-    quadtree(curFrame, 0, 0, m_param.sourceWidth >> 1, m_param.sourceHeight >> 1, U, entropy, bs);
-    quadtree(curFrame, 0, 0, m_param.sourceWidth >> 1, m_param.sourceHeight >> 1, V, entropy, bs);
+    quadtree(curFrame, 0, 0, m_param.sourceWidth, m_param.sourceHeight, Y, entropy);
+    quadtree(curFrame, 0, 0, m_param.sourceWidth >> 1, m_param.sourceHeight >> 1, U, entropy);
+    quadtree(curFrame, 0, 0, m_param.sourceWidth >> 1, m_param.sourceHeight >> 1, V, entropy);
 
     entropy.lbac_finish(&entropy.lbac_enc, &bs);
     bs.writeByteAlignment();
@@ -268,7 +254,7 @@ int Encoder::compressFrame(Entropy& entropy, Bitstream& bs)
         m_stats.accBits += m_nalList.m_nal[i].sizeBytes << 3;//*8
     }
 
-    return 0;
+    return m_nalList.m_numNal;
 }
 
 int Encoder::encode(const adc_picture* pic_in, adc_picture* pic_out, Entropy& entropy)

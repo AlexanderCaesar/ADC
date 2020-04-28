@@ -43,5 +43,6 @@ public:
             m_extraBuffer = NULL;
         }
     }
+    void reset();
     void serialize(NalUnitType nalUnitType, const Bitstream& bs);
 };

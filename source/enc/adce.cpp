@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
         int numEncoded = adc_encoder_encode(encoder, &p_nal, &nal, pic_in, pic_recon);
         if (numEncoded < 0)
         {
-            //break;
+            break;
         }
 
         {

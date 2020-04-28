@@ -164,7 +164,6 @@ int Files::readPicture(adc_picture& pic)
     int size = fread(buf, 1, framesize, input);
     if (size < framesize)
     {
-        ERR("read file failed");
         return -1;
     }
     if (chromaFormat == ADC_CSP_I420)
