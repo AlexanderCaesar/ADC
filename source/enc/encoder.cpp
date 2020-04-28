@@ -89,7 +89,7 @@ int adc_encoder_encode(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal, adc
     Encoder *encoder = static_cast<Encoder*>(enc);
     int numEncoded = encoder->encode(pic_in, pic_out);
 
-    for (int t = 0; t <= 256;t++)
+    for (int t = 65536; t <= 16777126;t++)
     {
         Entropy entropy;
         Bitstream bs;
@@ -104,7 +104,7 @@ int adc_encoder_encode(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal, adc
         lbac_ctx_model_t* ctx = &(lbac->h.part_split_flag);
 
         uint8_t temp = t;
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 24; i++)
         {
             lbac_encode_bin(temp%2, lbac, ctx, &bs);
             temp = temp>>1;
@@ -141,8 +141,8 @@ int adc_encoder_encode(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal, adc
         uint8_t split_flag = 0;
         temp = t;
         int diff = 0;
-        uint8_t aaa[8];
-        for (int i = 0; i < 8; i++)
+        uint8_t aaa[20];
+        for (int i = 0; i < 24; i++)
         {
             split_flag = decode_split_flag(&lbac_dec);
             aaa[i] = split_flag;
@@ -157,9 +157,9 @@ int adc_encoder_encode(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal, adc
         {
             temp = t;
             static int num = 0;
-            FILE *fp = fopen("cabac_bug.txt", "a");
+            FILE *fp = fopen("cabac_bug3.txt", "a");
             fprintf(fp, "============%3d===========\n", num++);
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 24; i++)
             {
                 fprintf(fp,"%d: %d %d\n", i, temp % 2, aaa[i]);
                 temp = temp >> 1;
