@@ -649,7 +649,13 @@ void lbac_finish(lbac_t *lbac, Bitstream  *bs)
             lbac->stacked_ff--;
         }
     }
+    uint32_t   oricode = lbac->code;
     lbac->code |= (1 << 7);
+    if (oricode != lbac->code)
+    {
+        int a = 0;
+        a++;
+    }
     bs->write(lbac->code >> 8, 24 - lbac->left_bits);
 
     if ((24 - lbac->left_bits) % 8) {

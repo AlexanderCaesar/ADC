@@ -89,61 +89,92 @@ int adc_encoder_encode(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal, adc
     Encoder *encoder = static_cast<Encoder*>(enc);
     int numEncoded = encoder->encode(pic_in, pic_out);
 
-    Entropy entropy;
-    Bitstream bs;
-
-    lbac_t lbac_enc;
-    lbac_t *lbac = &lbac_enc;
-    lbac_reset(lbac);
-    com_lbac_ctx_init(&lbac->h);
-
-    com_lbac_all_ctx_t *lbac_ctx = &lbac->h;
-
-    lbac_ctx_model_t* ctx = &(lbac->h.part_split_flag);
-   
-    lbac_encode_bin(0, lbac, ctx, &bs);
-    lbac_encode_bin(1, lbac, ctx, &bs);
-    lbac_encode_bin(0, lbac, ctx, &bs);
-    lbac_encode_bin(0, lbac, ctx, &bs);
-    lbac_encode_bin(0, lbac, ctx, &bs);
-    lbac_encode_bin(1, lbac, ctx, &bs);
-    lbac_encode_bin(0, lbac, ctx, &bs);
-    lbac_encode_bin(0, lbac, ctx, &bs);
-
-
-    lbac_finish(lbac, &bs);
-    bs.writeByteAlignment();
-
-    NALList            nallist;
-    nallist.serialize(NAL_FRAME, bs);
-
-    adc_nal *pp = &nallist.m_nal[0];
-
-
-    uint8_t        *cur, *end;
-    com_lbac_t     lbac_dec;
-
-    cur = pp->payload+ 4 + 1;
-    end = pp->payload + pp->sizeBytes;
-
-    lbac_dec_init(&lbac_dec, cur, end);
-    com_lbac_ctx_init(&(lbac_dec.ctx));
-
-    uint8_t split_flag = 0;
-    for (int i = 0; i < 36; i++)
+    for (int t = 0; t <= 256;t++)
     {
-        split_flag = decode_split_flag(&lbac_dec);
-        printf("%d: %d\n", i, split_flag);
+        Entropy entropy;
+        Bitstream bs;
+
+        lbac_t lbac_enc;
+        lbac_t *lbac = &lbac_enc;
+        lbac_reset(lbac);
+        com_lbac_ctx_init(&lbac->h);
+
+        com_lbac_all_ctx_t *lbac_ctx = &lbac->h;
+
+        lbac_ctx_model_t* ctx = &(lbac->h.part_split_flag);
+
+        uint8_t temp = t;
+        for (int i = 0; i < 8; i++)
+        {
+            lbac_encode_bin(temp%2, lbac, ctx, &bs);
+            temp = temp>>1;
+        }
+
+        //lbac_encode_bin(0, lbac, ctx, &bs);
+        //lbac_encode_bin(0, lbac, ctx, &bs);
+        //lbac_encode_bin(0, lbac, ctx, &bs);
+        //lbac_encode_bin(0, lbac, ctx, &bs);
+        //lbac_encode_bin(0, lbac, ctx, &bs);
+        //lbac_encode_bin(0, lbac, ctx, &bs);
+        //lbac_encode_bin(1, lbac, ctx, &bs);
+        //lbac_encode_bin(0, lbac, ctx, &bs);
+
+
+        lbac_finish(lbac, &bs);
+        bs.writeByteAlignment();
+
+        NALList            nallist;
+        nallist.serialize(NAL_FRAME, bs);
+
+        adc_nal *pp = &nallist.m_nal[0];
+
+
+        uint8_t        *cur, *end;
+        com_lbac_t     lbac_dec;
+
+        cur = pp->payload + 4 + 1;
+        end = pp->payload + pp->sizeBytes;
+
+        lbac_dec_init(&lbac_dec, cur, end);
+        com_lbac_ctx_init(&(lbac_dec.ctx));
+
+        uint8_t split_flag = 0;
+        temp = t;
+        int diff = 0;
+        uint8_t aaa[8];
+        for (int i = 0; i < 8; i++)
+        {
+            split_flag = decode_split_flag(&lbac_dec);
+            aaa[i] = split_flag;
+            if (split_flag != temp % 2)
+            {
+                diff = 1;
+            }
+            temp = temp >> 1;
+
+        }
+        if (diff)
+        {
+            temp = t;
+            static int num = 0;
+            FILE *fp = fopen("cabac_bug.txt", "a");
+            fprintf(fp, "============%3d===========\n", num++);
+            for (int i = 0; i < 8; i++)
+            {
+                fprintf(fp,"%d: %d %d\n", i, temp % 2, aaa[i]);
+                temp = temp >> 1;
+            }
+            fclose(fp);
+        }
     }
+   
 
-    split_flag = decode_split_flag(&lbac_dec);
+    //entropy.setBitstream(&bs);
 
-    entropy.setBitstream(&bs);
-
-    bs.resetBits();
+    //bs.resetBits();
 
 
-    bs.writeByteAlignment();
+    //bs.writeByteAlignment();
 
 
     {
