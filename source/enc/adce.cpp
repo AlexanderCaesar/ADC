@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     else
         files.writeHeaders(p_nal, nal);
 
-    adc_picture pic_orig, pic_out;;
+    adc_picture pic_orig, pic_out;
     adc_picture *pic_in = &pic_orig;
 
     adc_picture *pic_recon = (adcconfig.adc_p.bRec) ? &pic_out : NULL;

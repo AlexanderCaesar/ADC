@@ -100,26 +100,6 @@ int adc_encoder_encode(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal, adc
         *pi_nal = 0;
 
     return numEncoded;
-
-
- /*   adc_nal *pp = &nallist.m_nal[0];
-
-
-    uint8_t        *cur, *end;
-    com_lbac_t     lbac_dec;
-
-    cur = pp->payload + 4 + 1;
-    end = pp->payload + pp->sizeBytes;
-
-    lbac_dec_init(&lbac_dec, cur, end);
-    com_lbac_ctx_init(&(lbac_dec.ctx));
-
-    uint8_t split_flag = 0;
-
-    for (int i = 0; i < 8; i++)
-    {
-        split_flag = decode_split_flag(&lbac_dec);
-    }*/
 }
 
 Encoder::Encoder()
@@ -299,6 +279,16 @@ int Encoder::encode(const adc_picture* pic_in, adc_picture* pic_out, Entropy& en
         m_dpb->prepareEncode(inFrame);
 
         ret = compressFrame(entropy,m_bs);
+
+        if (m_param.bRec && pic_out)
+        {
+            pic_out->colorSpace = pic_in->colorSpace;
+            pic_out->pts = pic_in->pts;
+            pic_out->dts = pic_in->dts;
+            pic_out->colorSpace = pic_in->colorSpace;
+
+            //inFrame->m_reconPic->copyFromPicture(*pic_out, m_param);
+        }
 
         m_dpb->recycleUnreferenced();
     }
