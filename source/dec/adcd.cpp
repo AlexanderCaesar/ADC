@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
     adc_picture *pic_recon = &pic_out;
 
     int nal_count = 0;
+    int poc = 0;
     while (!!bitstreamFile)
     {
         /* location serves to work around a design fault in the decoder, whereby
@@ -95,6 +96,15 @@ int main(int argc, char *argv[])
         {
             ERR("Decode Frame failed");
             return 0;
+        }
+
+        if (nal.type == NAL_FRAME)
+        {
+            INF("poc %3d nal_size %3d\n", poc++, nal.sizeBytes);
+            if (pic_recon)
+            {
+                files.writeDec(pic_recon);
+            }
         }
         nal_count++;
     }

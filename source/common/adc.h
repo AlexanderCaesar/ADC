@@ -129,6 +129,12 @@ typedef struct adc_picture
     * initialize this value to the internal color space */
     int     colorSpace;
 
+    /* Width (in pixels) of the source pictures.  */
+    int       sourceWidth;
+
+    /* Height (in pixels) of the source pictures. */
+    int       sourceHeight;
+
 } adc_picture;
 
 
@@ -160,7 +166,7 @@ int         adc_decoder_headers(adc_decoder* dec, adc_nal *nal);
 int         adc_decoder_decode(adc_decoder* dec, adc_nal *nal, adc_picture *pic_out);
 
 
-#define ADC_BUILD "0.3.5"
+#define ADC_BUILD "0.3.6"
 
 #ifdef __cplusplus
 }

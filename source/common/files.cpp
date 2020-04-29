@@ -218,3 +218,35 @@ int Files::writeRecon(adc_picture* pic)
     }
     return 0;
 }
+
+int Files::writeDec(adc_picture* pic)
+{
+    if (chromaFormat == ADC_CSP_I420)
+    {
+        uint8_t* Y = pic->planes[0];
+        for (int h = 0; h < pic->sourceHeight; h++)
+        {
+            fwrite(Y, 1, pic->sourceWidth, output);
+            Y += pic->stride[0];
+        }
+        uint8_t* U = pic->planes[1];
+        for (int h = 0; h < (pic->sourceHeight >> 1); h++)
+        {
+            fwrite(U, 1, pic->sourceWidth >> 1, output);
+            U += pic->stride[1];
+        }
+
+        uint8_t* V = pic->planes[2];
+        for (int h = 0; h < (pic->sourceHeight >> 1); h++)
+        {
+            fwrite(V, 1, pic->sourceWidth >> 1, output);
+            V += pic->stride[2];
+        }
+    }
+    else
+    {
+        ERR("other chromaFormat to be added");
+        return -1;
+    }
+    return 0;
+}

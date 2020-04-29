@@ -107,8 +107,9 @@ int Decoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
     }
 
     uint32_t split = 0;
+    
 
-    if (width > 1 && height > 1)
+    if ((width + height) > 2)
     {
         curFrame->m_partition[yuv][curFrame->m_part_len[yuv]++] = split;
         split = m_detropy.decode_split_flag();
@@ -155,25 +156,7 @@ int Decoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
 
 int Decoder::decodeFrame(adc_nal *nal, adc_picture *pic_out)
 {
-    Frame* curFrame = m_dpb->m_picList.first();
-    if (!curFrame)
-        return -1;
 
-    m_detropy.convertPayloadToRBSP(nal->payload, nal->sizeBytes);
-    m_detropy.lbac_dec_init(m_detropy.m_nal.payload, m_detropy.m_nal.payload + m_detropy.m_nal.sizeBytes);
-    m_detropy.com_lbac_ctx_init();
-
-    quadtree(curFrame, 0, 0, m_param.sourceWidth, m_param.sourceHeight, Y);
-    quadtree(curFrame, 0, 0, m_param.sourceWidth >> 1, m_param.sourceHeight >> 1, U);
-    quadtree(curFrame, 0, 0, m_param.sourceWidth >> 1, m_param.sourceHeight >> 1, V);
-
-    return 0;
-}
-
-
-int Decoder::decode(adc_nal *nal, adc_picture *pic_out)
-{
-    int   ret = -1;
     Frame *inFrame;
 
     if (m_dpb->m_freeList.empty())
@@ -206,6 +189,41 @@ int Decoder::decode(adc_nal *nal, adc_picture *pic_out)
 
     m_dpb->prepareEncode(inFrame);
 
+    Frame* curFrame = m_dpb->m_picList.first();
+    if (!curFrame)
+        return -1;
+
+    m_detropy.convertPayloadToRBSP(nal->payload, nal->sizeBytes);
+    m_detropy.lbac_dec_init(m_detropy.m_nal.payload, m_detropy.m_nal.payload + m_detropy.m_nal.sizeBytes);
+    m_detropy.com_lbac_ctx_init();
+
+    quadtree(curFrame, 0, 0, m_param.sourceWidth, m_param.sourceHeight, Y);
+    quadtree(curFrame, 0, 0, m_param.sourceWidth >> 1, m_param.sourceHeight >> 1, U);
+    quadtree(curFrame, 0, 0, m_param.sourceWidth >> 1, m_param.sourceHeight >> 1, V);
+
+    if (pic_out)
+    {
+        pic_out->colorSpace = m_param.chromaFormat;
+        pic_out->poc = curFrame->m_poc;
+        pic_out->sourceHeight = m_param.sourceHeight;
+        pic_out->sourceWidth = m_param.sourceWidth;
+        for (int i = 0; i < 3; i++)
+        {
+            pic_out->planes[i] = inFrame->m_reconPic->m_picOrg[i];
+            pic_out->stride[i] = inFrame->m_reconPic->m_stride[i];
+        }
+    }
+
+    m_dpb->recycleUnreferenced();
+
+    return 0;
+}
+
+
+int Decoder::decode(adc_nal *nal, adc_picture *pic_out)
+{
+    int   ret = -1;
+
     switch (nal->type)
     {
     case NAL_VPS:
@@ -213,7 +231,6 @@ int Decoder::decode(adc_nal *nal, adc_picture *pic_out)
         break;
     case NAL_FRAME:
         ret = decodeFrame(nal, pic_out);
-        m_dpb->recycleUnreferenced();
         return ret;
     default:
         ERR("unkown nal type %d", nal->type);

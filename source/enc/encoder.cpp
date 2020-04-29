@@ -164,7 +164,7 @@ int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
 
     uint32_t split = (mode - min > m_param.et) || (max - mode > m_param.et);
 
-    if (width > 1 && height > 1)
+    if ((width+height) > 2)
     {
         curFrame->m_partition[yuv][curFrame->m_part_len[yuv]++] = split;
         entropy.codeSplit(split);
@@ -285,7 +285,8 @@ int Encoder::encode(const adc_picture* pic_in, adc_picture* pic_out, Entropy& en
             pic_out->pts = pic_in->pts;
             pic_out->dts = pic_in->dts;
             pic_out->poc = pic_in->poc;
-            pic_out->colorSpace = pic_in->colorSpace;
+            pic_out->sourceHeight = m_param.sourceHeight;
+            pic_out->sourceWidth = m_param.sourceWidth;
             for (int i = 0; i < 3; i++)
             {
                 pic_out->planes[i] = inFrame->m_reconPic->m_picOrg[i];
