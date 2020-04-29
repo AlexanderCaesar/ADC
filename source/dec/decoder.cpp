@@ -13,6 +13,7 @@
 #include"adc.h"
 #include"decoder.h"
 #include"frame.h"
+#include"picyuv.h"
 
 adc_decoder *adc_decoder_open(adc_param *p)
 {
@@ -95,31 +96,75 @@ int Decoder::decodeVPS(adc_nal *nal)
     return m_detropy.decodeVPS(&m_param,nal);
 }
 
-
-
-/*   adc_nal *pp = &nallist.m_nal[0];
-uint8_t        *cur, *end;
-com_lbac_t     lbac_dec;
-
-cur = pp->payload + 4 + 1;
-end = pp->payload + pp->sizeBytes;
-
-lbac_dec_init(&lbac_dec, cur, end);
-com_lbac_ctx_init(&(lbac_dec.ctx));
-
-uint8_t split_flag = 0;
-
-for (int i = 0; i < 8; i++)
+int Decoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, uint32_t height, YUVType yuv)
 {
-split_flag = decode_split_flag(&lbac_dec);
-}*/
+    int min = 0;
+    int max = 0;
+
+    if (width == 0 || height == 0)
+    {
+        return -1;
+    }
+
+    pixel* src = curFrame->m_fencPic->m_picOrg[yuv] + Y*curFrame->m_fencPic->m_stride[yuv] + X;
+    int mode = calCUMode(src, width, height, curFrame->m_fencPic->m_stride[yuv], min, max);
+
+    uint32_t split = (mode - min > m_param.et) || (max - mode > m_param.et);
+
+    if (width > 1 && height > 1)
+    {
+        curFrame->m_partition[yuv][curFrame->m_part_len[yuv]++] = split;
+        //entropy.codeSplit(split);
+    }
+    if (!split)
+    {
+        pixel* rec = curFrame->m_reconPic->m_picOrg[yuv] + Y*curFrame->m_fencPic->m_stride[yuv] + X;
+
+        int ref_mode = calBoderMode(rec, X, Y, width, height, curFrame->m_fencPic->m_stride[yuv]);
+
+        uint32_t direction = 0;
+        if (ref_mode < 0)
+        {
+            ref_mode = calDirection(rec, mode, width, height, curFrame->m_fencPic->m_stride[yuv], direction);
+            curFrame->m_direction[yuv][curFrame->m_dir_len[yuv]++] = direction;
+            //entropy.codeDirection(split);
+        }
+
+        curFrame->m_residual[yuv][curFrame->m_res_len[yuv]++] = mode - ref_mode;
+        //entropy.codeDirRes(mode - ref_mode);
+        curFrame->m_reconPic->copyModePixel(X, Y, width, height, yuv, mode);
+        return 0;
+    }
+    else
+    {
+        uint32_t ww = width >> 1;
+        uint32_t hh = height >> 1;
+        for (uint32_t subPartIdx = 0; subPartIdx < 4; subPartIdx++)
+        {
+            uint32_t XX = X + ww * (subPartIdx >> 1);
+            uint32_t YY = Y + hh * (subPartIdx & 1);
+
+            uint32_t www = ww + (width % 2) * (subPartIdx >> 1);
+            uint32_t hhh = hh + (height % 2) * (subPartIdx & 1);
+
+            //quadtree(curFrame, XX, YY, www, hhh, yuv, entropy);
+
+        }
+        return 0;
+    }
+}
+
 int Decoder::decodeFrame(adc_nal *nal, adc_picture *pic_out)
 {
     Frame* curFrame = m_dpb->m_picList.first();
     if (!curFrame)
         return -1;
 
-    return 0;//m_detropy.decodeVPS(&m_param, nal);
+    m_detropy.convertPayloadToRBSP(nal->payload, nal->sizeBytes);
+    m_detropy.lbac_dec_init(m_detropy.m_nal.payload, m_detropy.m_nal.payload + m_detropy.m_nal.sizeBytes);
+    m_detropy.com_lbac_ctx_init();
+
+    return 0;
 }
 
 

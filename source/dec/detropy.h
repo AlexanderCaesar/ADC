@@ -30,15 +30,13 @@ typedef struct uavs3d_com_lbac_t {
     com_lbac_all_ctx_t ctx;
 } com_lbac_t;
 
-void lbac_dec_init(com_lbac_t *lbac, uint8_t *cur, uint8_t* end);
-uint8_t decode_split_flag(com_lbac_t * lbac);
-
 
 class Detropy 
 {
 public:
-    adc_nal m_nal;
-    int     m_occupancy;
+    adc_nal        m_nal;
+    com_lbac_t     lbac_dec;
+    int            m_occupancy;
 
     Detropy();
     ~Detropy()
@@ -51,5 +49,8 @@ public:
     }
     void convertPayloadToRBSP(uint8_t* src, int src_len);
     int  decodeVPS(adc_param *p, adc_nal *nal);
+
+    void lbac_dec_init(uint8_t *cur, uint8_t* end);
+    void com_lbac_ctx_init();
 
 };

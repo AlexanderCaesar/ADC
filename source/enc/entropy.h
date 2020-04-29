@@ -17,12 +17,6 @@
 
 #pragma once
 
-/* MCABAC (START) */
-#define MAX_PROB            ((1 << PROB_BITS) - 1) // equal to PROB_LPS + PROB_MPS, 0x7FF
-#define HALF_PROB           (MAX_PROB >> 1)
-#define PROB_INIT           (HALF_PROB << 1) /* 1/2 of initialization = (HALF_PROB << 1)+ MPS(0) */
-#define LG_PMPS_SHIFTNO     2
-#define QUAR_HALF_PROB      (1 << (PROB_BITS-3))
 
 typedef struct adc_lbac_t {
     uint32_t            range;

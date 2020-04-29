@@ -23,8 +23,14 @@ typedef uint8_t  pixel;
 
 #define com_mset(dst,v,size)      memset((dst), (v), (size))
 
+/* MCABAC (START) */
 #define PROB_BITS           11 // LPS_PROB(10-bit) + MPS(1-bit)
 #define PROB_MASK           ((1 << PROB_BITS) - 1) // mask for LPS_PROB + MPS
+#define MAX_PROB            ((1 << PROB_BITS) - 1) // equal to PROB_LPS + PROB_MPS, 0x7FF
+#define HALF_PROB           (MAX_PROB >> 1)
+#define PROB_INIT           (HALF_PROB << 1) /* 1/2 of initialization = (HALF_PROB << 1)+ MPS(0) */
+#define LG_PMPS_SHIFTNO     2
+#define QUAR_HALF_PROB      (1 << (PROB_BITS-3))
 
 typedef int16_t lbac_ctx_model_t;
 

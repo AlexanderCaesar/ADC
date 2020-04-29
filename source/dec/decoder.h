@@ -40,6 +40,7 @@ public:
     void printSummary();
 
     int  decodeVPS(adc_nal *nal);
+    int  quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, uint32_t height, YUVType yuv);
     int  decodeFrame(adc_nal *nal, adc_picture *pic_out);
     int  decode(adc_nal *nal, adc_picture *pic_out);
 
