@@ -186,7 +186,6 @@ int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
         curFrame->m_residual[yuv][curFrame->m_res_len[yuv]++] = mode - ref_mode;
         entropy.codeDirRes(mode - ref_mode);
         curFrame->m_reconPic->copyModePixel(X, Y, width,  height, yuv,  mode);
-
         return 0;
     }
     else
@@ -278,18 +277,21 @@ int Encoder::encode(const adc_picture* pic_in, adc_picture* pic_out, Entropy& en
 
         m_dpb->prepareEncode(inFrame);
 
-        ret = compressFrame(entropy,m_bs);
+        ret = compressFrame(entropy, m_bs);
 
         if (m_param.bRec && pic_out)
         {
             pic_out->colorSpace = pic_in->colorSpace;
             pic_out->pts = pic_in->pts;
             pic_out->dts = pic_in->dts;
+            pic_out->poc = pic_in->poc;
             pic_out->colorSpace = pic_in->colorSpace;
-
-            //inFrame->m_reconPic->copyFromPicture(*pic_out, m_param);
+            for (int i = 0; i < 3; i++)
+            {
+                pic_out->planes[i] = inFrame->m_reconPic->m_picOrg[i];
+                pic_out->stride[i] = inFrame->m_reconPic->m_stride[i];
+            }
         }
-
         m_dpb->recycleUnreferenced();
     }
     else

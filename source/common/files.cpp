@@ -157,6 +157,11 @@ int Files::writeHeaders(adc_nal* nal, uint32_t nalcount)
     return writeNAL(output, nal, nalcount);
 }
 
+int Files::writeFrames(adc_nal* nal, uint32_t nalcount)
+{
+    return writeNAL(output, nal, nalcount);
+}
+
 int Files::readPicture(adc_picture& pic)
 {
     pic.colorSpace = chromaFormat;
@@ -178,6 +183,38 @@ int Files::readPicture(adc_picture& pic)
     {
         ERR("other chromaFormat to be added");
         return -1; 
+    }
+    return 0;
+}
+
+int Files::writeRecon(adc_picture* pic)
+{
+    if (chromaFormat == ADC_CSP_I420)
+    {
+        uint8_t* Y = pic->planes[0];
+        for (uint32_t h = 0; h < height; h++)
+        {
+            fwrite(Y, 1, width, recon);
+            Y += pic->stride[0];
+        }
+        uint8_t* U = pic->planes[1];
+        for (uint32_t h = 0; h < (height >> 1); h++)
+        {
+            fwrite(U, 1, width>>1, recon);
+            U += pic->stride[1];
+        }
+
+        uint8_t* V = pic->planes[2];
+        for (uint32_t h = 0; h < (height >> 1); h++)
+        {
+            fwrite(V, 1, width >> 1, recon);
+            V += pic->stride[2];
+        }
+    }
+    else
+    {
+        ERR("other chromaFormat to be added");
+        return -1;
     }
     return 0;
 }

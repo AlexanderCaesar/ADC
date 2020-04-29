@@ -34,8 +34,10 @@ public:
     void  closefile();
 
     int   readPicture(adc_picture& pic);
+    int   writeRecon(adc_picture* pic);
 
     int   writeNAL(FILE *fp, adc_nal* nal, uint32_t nalcount);
     int   writeHeaders(adc_nal* nal, uint32_t nalcount);
+    int   writeFrames(adc_nal* nal, uint32_t nalcount);
 
 };

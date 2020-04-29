@@ -86,9 +86,12 @@ int main(int argc, char *argv[])
             break;
         }
 
+        if (adcconfig.adc_p.bRec && pic_recon)
         {
-            //to be done
+            files.writeRecon(pic_recon);
         }
+
+        files.writeFrames(p_nal, nal);
 
     }
 
