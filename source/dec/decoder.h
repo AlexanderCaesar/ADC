@@ -14,6 +14,7 @@
 #include"nal.h"
 #include"bitstream.h"
 #include"detropy.h"
+#include"dpb.h"
 
 #pragma once
 
@@ -27,6 +28,7 @@ public:
     adc_param          m_param;
     adc_stats          m_stats;
     Detropy            m_detropy;
+    DPB*               m_dpb;
 
     Decoder();
     ~Decoder()
@@ -38,7 +40,7 @@ public:
     void printSummary();
 
     int  decodeVPS(adc_nal *nal);
-    int  decodeFrame(adc_nal *nal);
-    int  decode(adc_nal *nal);
+    int  decodeFrame(adc_nal *nal, adc_picture *pic_out);
+    int  decode(adc_nal *nal, adc_picture *pic_out);
 
 };

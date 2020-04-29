@@ -57,6 +57,9 @@ int main(int argc, char *argv[])
     InputByteStream bytestream(bitstreamFile);
     adc_nal nal;
 
+    adc_picture pic_out;
+    adc_picture *pic_recon = &pic_out;
+
     int nal_count = 0;
     while (!!bitstreamFile)
     {
@@ -88,7 +91,7 @@ int main(int argc, char *argv[])
         nal.type = nalUnit.data()[0];
         nal.sizeBytes = nalUnit.size();
 
-        if(adc_decoder_decode(decoder,&nal) < 0)
+        if(adc_decoder_decode(decoder,&nal,pic_recon) < 0)
         {
             ERR("Decode Frame failed");
             return 0;

@@ -12,6 +12,7 @@
 #include"log.h"
 #include"adc.h"
 #include"decoder.h"
+#include"frame.h"
 
 adc_decoder *adc_decoder_open(adc_param *p)
 {
@@ -49,12 +50,12 @@ int adc_decoder_headers(adc_decoder* dec, adc_nal *nal)
     return -1;
 }
 
-int adc_decoder_decode(adc_decoder* dec, adc_nal *nal)
+int adc_decoder_decode(adc_decoder* dec, adc_nal *nal, adc_picture *pic_out)
 {
     if (nal && dec)
     {
         Decoder *decoder = static_cast<Decoder*>(dec);
-        return decoder->decode(nal);
+        return decoder->decode(nal,pic_out);
     }
     return -1;
 }
@@ -71,15 +72,17 @@ Decoder::Decoder()
     m_stats.bitrate = 0;
     m_stats.accBits = 0;
     m_stats.encodedPictureCount = 0;
-
+    m_dpb = NULL;
 }
 
 void Decoder::create()
 {
-
+    m_dpb = new DPB(&m_param);
 }
+
 void Decoder::destroy()
 {
+    delete m_dpb;
 }
 
 void Decoder::printSummary()
@@ -92,24 +95,63 @@ int Decoder::decodeVPS(adc_nal *nal)
     return m_detropy.decodeVPS(&m_param,nal);
 }
 
-int Decoder::decodeFrame(adc_nal *nal)
+int Decoder::decodeFrame(adc_nal *nal, adc_picture *pic_out)
 {
+    Frame* curFrame = m_dpb->m_picList.first();
+    if (!curFrame)
+        return -1;
+
     return 0;//m_detropy.decodeVPS(&m_param, nal);
 }
 
 
-int Decoder::decode(adc_nal *nal)
+int Decoder::decode(adc_nal *nal, adc_picture *pic_out)
 {
+    int   ret = -1;
+    Frame *inFrame;
+
+    if (m_dpb->m_freeList.empty())
+    {
+        inFrame = new Frame;
+        inFrame->m_encodeStartTime = time_mdate();
+
+        if (inFrame->create(&m_param))
+        {
+            ERR("memory allocation failure, aborting encode\n");
+            inFrame->destroy();
+            delete inFrame;
+            return -1;
+        }
+
+    }
+    else
+    {
+        inFrame = m_dpb->m_freeList.popBack();
+        inFrame->m_encodeStartTime = time_mdate();
+        for (int i = 0; i < 3; i++)
+        {
+            inFrame->m_part_len[i] = 0;
+            inFrame->m_dir_len[i] = 0;
+            inFrame->m_res_len[i] = 0;
+        }
+    }
+
+    inFrame->m_poc = ++m_poc;
+
+    m_dpb->prepareEncode(inFrame);
+
     switch (nal->type)
     {
     case NAL_VPS:
         return decodeVPS(nal);
         break;
     case NAL_FRAME:
-        break;
+        ret = decodeFrame(nal, pic_out);
+        m_dpb->recycleUnreferenced();
+        return ret;
     default:
         ERR("unkown nal type %d", nal->type);
         return -1;
     }
-    return -1;
+    return ret;
 }

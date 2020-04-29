@@ -157,7 +157,7 @@ typedef struct adc_decoder adc_decoder;
 adc_decoder *adc_decoder_open(adc_param *p);
 void        adc_decoder_close(adc_decoder* dec);
 int         adc_decoder_headers(adc_decoder* dec, adc_nal *nal);
-int         adc_decoder_decode(adc_decoder* dec,adc_nal *nal);
+int         adc_decoder_decode(adc_decoder* dec, adc_nal *nal, adc_picture *pic_out);
 
 
 #define ADC_BUILD "0.3.1"
