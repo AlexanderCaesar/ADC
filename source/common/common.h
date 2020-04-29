@@ -23,6 +23,21 @@ typedef uint8_t  pixel;
 
 #define com_mset(dst,v,size)      memset((dst), (v), (size))
 
+#define PROB_BITS           11 // LPS_PROB(10-bit) + MPS(1-bit)
+#define PROB_MASK           ((1 << PROB_BITS) - 1) // mask for LPS_PROB + MPS
+
+typedef int16_t lbac_ctx_model_t;
+
+/* context models for arithemetic coding */
+typedef struct uavs3e_com_lbac_all_ctx_t {
+    lbac_ctx_model_t   part_split_flag;
+    lbac_ctx_model_t   dir_flag;
+    lbac_ctx_model_t   sign_flag;
+    lbac_ctx_model_t   res;
+} com_lbac_all_ctx_t;
+
+typedef const int16_t tab_s16;
+
 void BuildLogFilePath(const char *path);
 const char* GetOsVersion();
 int64_t time_mdate();

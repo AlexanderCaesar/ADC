@@ -95,6 +95,24 @@ int Decoder::decodeVPS(adc_nal *nal)
     return m_detropy.decodeVPS(&m_param,nal);
 }
 
+
+
+/*   adc_nal *pp = &nallist.m_nal[0];
+uint8_t        *cur, *end;
+com_lbac_t     lbac_dec;
+
+cur = pp->payload + 4 + 1;
+end = pp->payload + pp->sizeBytes;
+
+lbac_dec_init(&lbac_dec, cur, end);
+com_lbac_ctx_init(&(lbac_dec.ctx));
+
+uint8_t split_flag = 0;
+
+for (int i = 0; i < 8; i++)
+{
+split_flag = decode_split_flag(&lbac_dec);
+}*/
 int Decoder::decodeFrame(adc_nal *nal, adc_picture *pic_out)
 {
     Frame* curFrame = m_dpb->m_picList.first();
