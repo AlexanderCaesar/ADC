@@ -180,11 +180,11 @@ int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
         {
             ref_mode = calDirection(rec, mode, width, height, curFrame->m_fencPic->m_stride[yuv], direction);
             curFrame->m_direction[yuv][curFrame->m_dir_len[yuv]++] = direction;
-            entropy.codeDirection(split);
+            entropy.codeDirection(direction);
         }
 
         curFrame->m_residual[yuv][curFrame->m_res_len[yuv]++] = mode - ref_mode;
-        entropy.codeDirRes(mode - ref_mode);
+        entropy.codeRes(mode - ref_mode);
         curFrame->m_reconPic->copyModePixel(X, Y, width,  height, yuv,  mode);
         return 0;
     }

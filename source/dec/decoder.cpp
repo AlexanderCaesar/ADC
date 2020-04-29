@@ -106,16 +106,14 @@ int Decoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
         return -1;
     }
 
-    pixel* src = curFrame->m_fencPic->m_picOrg[yuv] + Y*curFrame->m_fencPic->m_stride[yuv] + X;
-    int mode = calCUMode(src, width, height, curFrame->m_fencPic->m_stride[yuv], min, max);
-
-    uint32_t split = (mode - min > m_param.et) || (max - mode > m_param.et);
+    uint32_t split = 0;
 
     if (width > 1 && height > 1)
     {
         curFrame->m_partition[yuv][curFrame->m_part_len[yuv]++] = split;
-        //entropy.codeSplit(split);
+        split = m_detropy.decode_split_flag();
     }
+
     if (!split)
     {
         pixel* rec = curFrame->m_reconPic->m_picOrg[yuv] + Y*curFrame->m_fencPic->m_stride[yuv] + X;
@@ -125,13 +123,14 @@ int Decoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
         uint32_t direction = 0;
         if (ref_mode < 0)
         {
-            ref_mode = calDirection(rec, mode, width, height, curFrame->m_fencPic->m_stride[yuv], direction);
+            direction = m_detropy.decode_direction_flag();
+            ref_mode = getDirectionRef(rec,width, height, curFrame->m_fencPic->m_stride[yuv], direction);
             curFrame->m_direction[yuv][curFrame->m_dir_len[yuv]++] = direction;
-            //entropy.codeDirection(split);
         }
 
-        curFrame->m_residual[yuv][curFrame->m_res_len[yuv]++] = mode - ref_mode;
-        //entropy.codeDirRes(mode - ref_mode);
+        int32_t res = m_detropy.decode_res();
+        curFrame->m_residual[yuv][curFrame->m_res_len[yuv]++] = res;
+        int32_t mode = res + ref_mode;
         curFrame->m_reconPic->copyModePixel(X, Y, width, height, yuv, mode);
         return 0;
     }
@@ -147,7 +146,7 @@ int Decoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
             uint32_t www = ww + (width % 2) * (subPartIdx >> 1);
             uint32_t hhh = hh + (height % 2) * (subPartIdx & 1);
 
-            //quadtree(curFrame, XX, YY, www, hhh, yuv, entropy);
+            quadtree(curFrame, XX, YY, www, hhh, yuv);
 
         }
         return 0;
@@ -163,6 +162,10 @@ int Decoder::decodeFrame(adc_nal *nal, adc_picture *pic_out)
     m_detropy.convertPayloadToRBSP(nal->payload, nal->sizeBytes);
     m_detropy.lbac_dec_init(m_detropy.m_nal.payload, m_detropy.m_nal.payload + m_detropy.m_nal.sizeBytes);
     m_detropy.com_lbac_ctx_init();
+
+    quadtree(curFrame, 0, 0, m_param.sourceWidth, m_param.sourceHeight, Y);
+    quadtree(curFrame, 0, 0, m_param.sourceWidth >> 1, m_param.sourceHeight >> 1, U);
+    quadtree(curFrame, 0, 0, m_param.sourceWidth >> 1, m_param.sourceHeight >> 1, V);
 
     return 0;
 }

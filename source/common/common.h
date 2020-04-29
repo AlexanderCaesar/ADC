@@ -53,3 +53,4 @@ pixel calBoderMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride)
 int   calCUMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride, int& min, int& max);
 int   calBoderMode(pixel *src, uint32_t X, uint32_t Y, uint32_t width, uint32_t height, uint32_t stride);
 int   calDirection(pixel *rec, int mode, uint32_t width, uint32_t height, uint32_t stride, uint32_t& direction);
+int   getDirectionRef(pixel *rec, uint32_t width, uint32_t height, uint32_t stride, uint32_t direction);/*get direction Ref.*/

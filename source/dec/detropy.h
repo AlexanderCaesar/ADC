@@ -53,4 +53,8 @@ public:
     void lbac_dec_init(uint8_t *cur, uint8_t* end);
     void com_lbac_ctx_init();
 
+    uint8_t decode_split_flag();
+    uint8_t decode_direction_flag();
+    int32_t decode_res();
+
 };

@@ -245,6 +245,22 @@ int calDirection(pixel *rec, int mode, uint32_t width, uint32_t height, uint32_t
     }
 }
 
+/*get direction Ref.*/
+int getDirectionRef(pixel *rec, uint32_t width, uint32_t height, uint32_t stride, uint32_t direction)
+{
+    int left = (int)rec[(height / 2)*stride - 1]; //middle-bottom
+    int top = (int)rec[width / 2 - stride];    //middle-right
+
+    if (direction)
+    {
+        return top;
+    }
+    else
+    {
+        return left;
+    }
+}
+
 int calCUMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride, int& min, int& max)
 {
     for (int i = 0; i < 256; i++)

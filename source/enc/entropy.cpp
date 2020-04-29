@@ -680,7 +680,7 @@ void Entropy::codeDirection(uint32_t val)
     lbac_encode_bin(val, &lbac_enc, ctx, bs);
 }
 
-void Entropy::codeDirRes(int32_t val)
+void Entropy::codeRes(int32_t val)
 {
     lbac_ctx_model_t* sin_ctx = &(lbac_enc.h.sign_flag);
     lbac_ctx_model_t* res_ctx = &(lbac_enc.h.res);

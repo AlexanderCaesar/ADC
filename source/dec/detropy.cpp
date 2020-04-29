@@ -646,12 +646,6 @@ static uint32_t lbac_dec_bin(com_lbac_t * lbac, lbac_ctx_model_t * model)
     return lbac_dec_bin_inline(lbac, model);
 }
 
-uint8_t decode_split_flag(com_lbac_t * lbac)
-{
-    return lbac_dec_bin(lbac, &lbac->ctx.part_split_flag);
-}
-
-
 Detropy::Detropy()
 {
     m_occupancy = 0;
@@ -729,4 +723,42 @@ void Detropy::com_lbac_ctx_init()
     for (int i = 0; i < num; i++) {
         p[i] = PROB_INIT;
     }
+}
+
+uint8_t Detropy::decode_split_flag()
+{
+    return lbac_dec_bin(&lbac_dec, &(lbac_dec.ctx.part_split_flag));
+}
+
+uint8_t Detropy::decode_direction_flag()
+{
+    return lbac_dec_bin(&lbac_dec, &(lbac_dec.ctx.dir_flag));
+}
+
+int32_t Detropy::decode_res()
+{
+    lbac_ctx_model_t* sin_ctx = &(lbac_dec.ctx.sign_flag);
+    lbac_ctx_model_t* res_ctx = &(lbac_dec.ctx.res);
+
+    uint8_t bin = 0;
+    int32_t count = 0;
+    int32_t value = 0;
+    uint8_t sign = 0;
+
+    do{
+        bin = lbac_dec_bin(&lbac_dec, res_ctx);
+        count++;
+    } while ( bin == 0 );
+
+    value = count - 1;
+
+    if (value)
+    {
+        sign = lbac_dec_bin(&lbac_dec, sin_ctx);
+    }
+
+    if (sign)
+        value *= -1;
+
+    return value;
 }
