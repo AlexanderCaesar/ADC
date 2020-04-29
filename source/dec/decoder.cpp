@@ -91,6 +91,13 @@ int Decoder::decodeVPS(adc_nal *nal)
 {
     return m_detropy.decodeVPS(&m_param,nal);
 }
+
+int Decoder::decodeFrame(adc_nal *nal)
+{
+    return 0;//m_detropy.decodeVPS(&m_param, nal);
+}
+
+
 int Decoder::decode(adc_nal *nal)
 {
     switch (nal->type)

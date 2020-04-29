@@ -38,6 +38,7 @@ public:
     void printSummary();
 
     int  decodeVPS(adc_nal *nal);
+    int  decodeFrame(adc_nal *nal);
     int  decode(adc_nal *nal);
 
 };
