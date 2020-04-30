@@ -12,6 +12,7 @@
 
 #include <stdint.h>
 #include "adc.h"
+#include "frame.h"
 
 typedef uint8_t  pixel;
 
@@ -54,3 +55,5 @@ int   calCUMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride, in
 int   calBoderMode(pixel *src, uint32_t X, uint32_t Y, uint32_t width, uint32_t height, uint32_t stride);
 int   calDirection(pixel *rec, int mode, uint32_t width, uint32_t height, uint32_t stride, uint32_t& direction);
 int   getDirectionRef(pixel *rec, uint32_t width, uint32_t height, uint32_t stride, uint32_t direction);/*get direction Ref.*/
+
+void  find_psnr(Frame* curFrame, double psnr[3], int bit_depth);

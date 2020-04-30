@@ -42,6 +42,10 @@ adc_encoder *adc_encoder_open(adc_param *p)
         , encoder->m_param.et
         , encoder->m_param.chromaFormat);
 
+    INF("--------------------------------------------------------------------------------------");
+    INF("    POC  PSNR-Y   PSNR-U   PSNR-V   Bits    EncT(ms)");
+    INF("--------------------------------------------------------------------------------------");
+
     return encoder;
 }
 
@@ -131,7 +135,27 @@ void Encoder::destroy()
 
 void Encoder::printSummary()
 {
-    INF("SUMMARY");
+    INF("===============================================================================");
+
+    INF("  PSNR Y(dB)       : %-5.4f", m_stats.globalPsnrY/m_stats.encodedPictureCount);
+    INF("  PSNR U(dB)       : %-5.4f", m_stats.globalPsnrY / m_stats.encodedPictureCount);
+    INF("  PSNR V(dB)       : %-5.4f", m_stats.globalPsnrY / m_stats.encodedPictureCount);
+
+    m_stats.elapsedVideoTime = (double)m_stats.encodedPictureCount / (double)m_param.fpsNum;
+    INF("  Total bits(bits) : %lld", m_stats.accBits);
+    m_stats.bitrate = (double)m_stats.accBits / m_stats.elapsedVideoTime;
+
+    m_stats.bitrate /= 1000;
+    INF("  bitrate(kbps)    : %-5.4f", m_stats.bitrate);
+    INF("===============================================================================");
+    INF("Encoded frame count               = %d", m_stats.encodedPictureCount);
+    INF("Total encoding time               = %.3f msec,",
+        m_stats.elapsedEncodeTime);
+    INF("Average encoding time for a frame = %.3f msec",
+        m_stats.elapsedEncodeTime / (double)m_stats.encodedPictureCount);
+    INF("Average encoding speed            = %.5f frames/sec",
+        ((double)m_stats.encodedPictureCount * 1000) / m_stats.elapsedEncodeTime);
+    INF("===============================================================================");
 }
 
 void Encoder::getStreamHeaders(NALList& list, Entropy& entropy)
@@ -232,6 +256,22 @@ int Encoder::compressFrame(Entropy& entropy, Bitstream& bs)
     {
         m_stats.accBits += m_nalList.m_nal[i].sizeBytes << 3;//*8
     }
+
+    double psnr[3];
+    psnr[0] = psnr[1] = psnr[2] = 0;
+
+    find_psnr(curFrame, psnr, 8);
+
+    m_stats.globalPsnrY += psnr[0];
+    m_stats.globalPsnrU += psnr[1];
+    m_stats.globalPsnrV += psnr[2];
+
+    m_stats.encodedPictureCount++;
+
+    int64_t compress_frame_time = (time_mdate() - curFrame->m_encodeStartTime) / 1000;
+    m_stats.elapsedEncodeTime += compress_frame_time;
+
+    INF("  %5d  %4.2lf    %4.2lf   %4.2lf %7d  %5lld", curFrame->m_poc, psnr[0], psnr[1], psnr[2], m_nalList.m_nal[0].sizeBytes << 3, compress_frame_time);
 
     return m_nalList.m_numNal;
 }

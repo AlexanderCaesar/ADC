@@ -99,7 +99,9 @@ void get_log_str(char* buf, int max_len, int level, const char *file, int line_n
 
   if (ret > 0)
   {
-    ret += vsnprintf(buf + ret, max_len - ret - 1, format, args);
+      if (level == LOG_LEVEL_INF)
+          ret = 0;
+      ret += vsnprintf(buf + ret, max_len - ret - 1, format, args);
   }
 }
 

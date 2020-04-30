@@ -24,6 +24,7 @@
 
 
 #include "common.h"
+#include "picyuv.h"
 
 using namespace std;
 
@@ -305,5 +306,40 @@ int calCUMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride, int&
         }
     }
     return mode;
+}
+
+void find_psnr(Frame* curFrame, double psnr[3], int bit_depth)
+{
+    double sum[3], mse[3];
+    pixel *o, *r;
+    int i, j, k;
+    int peak_val = (bit_depth == 8) ? 255 : 1023;
+    int width[3];
+    int height[3];
+
+    PicYuv*     rec = curFrame->m_reconPic;
+    PicYuv*     enc = curFrame->m_fencPic;
+
+    width[0] = enc->m_picWidth;
+    width[1] = enc->m_picWidth >> 1;
+    width[2] = enc->m_picWidth >> 1;
+    height[0] = enc->m_picHeight;
+    height[1] = enc->m_picHeight >> 1;
+    height[2] = enc->m_picHeight >> 1;
+    for (i = 0; i < 3; i++) {
+        o = (pixel *)enc->m_picOrg[i];
+        r = (pixel *)rec->m_picOrg[i];
+        sum[i] = 0;
+        for (j = 0; j < height[i]; j++) {
+            for (k = 0; k < width[i]; k++) {
+                sum[i] += (o[k] - r[k]) * (o[k] - r[k]);
+            }
+            o = (pixel *)((unsigned char *)o + enc->m_stride[i]);
+            r = (pixel *)((unsigned char *)r + rec->m_stride[i]);
+        }
+        mse[i] = sum[i] / (width[i] * height[i]);
+        // psnr[i] = (mse[i] == 0.0) ? 100. : fabs(10 * log10(((255 * 255 * 16) / mse[i])));
+        psnr[i] = (mse[i] == 0.0) ? 100. : fabs(10 * log10(((peak_val * peak_val) / mse[i])));
+    }
 }
 
