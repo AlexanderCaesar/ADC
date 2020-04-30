@@ -22,6 +22,7 @@ ADCConfig::ADCConfig()
     adc_p.logLevel = 3;
     adc_p.totalFrames = 0;
     adc_p.chromaFormat = 1;
+    adc_p.pm = 50;
     log_file = "adc.log";
 }
 
@@ -42,12 +43,13 @@ int ADCConfig::parse_arg(int argc, char* argv[])
         { "totalframes", required_argument, NULL, 't' },
         { "et", required_argument, NULL, 'e' },
         { "logfile", required_argument, NULL, 'g' },
+        { "pm", required_argument, NULL, 'p' },
         { 0, 0, 0, 0 }
     };
 
     int opt;
     int option_index = 0;
-    char* optstring = "hl:v:h:i:o:R:l:P:S:f:W:H:t:e:g:"; //There must be an ":" in the end of string
+    char* optstring = "hl:v:h:i:o:R:l:P:S:f:W:H:t:e:g:p:"; //There must be an ":" in the end of string
     std::string temp;
 
     while ((opt = getopt_long(argc, argv, optstring, long_options, &option_index)) != -1)
@@ -108,6 +110,9 @@ int ADCConfig::parse_arg(int argc, char* argv[])
         case 'g':
             log_file = optarg;
             break;
+        case 'p':
+            adc_p.pm = atoi(optarg);
+            break;
         }
     }
 
@@ -131,4 +136,5 @@ void ADCConfig::display_help()
     printf("  -t, --totalframes <totalframes> Total Number of frames to be encoded\n");
     printf("  -e, --et <et> Error tolerance 0~255\n");
     printf("  -g, --logfile <logfile > logfile\n");
+    printf("  -p, --pm <et > Percent of mode cont to be split 0~100 0~100\n");
 }

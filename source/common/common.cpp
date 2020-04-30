@@ -262,7 +262,7 @@ int getDirectionRef(pixel *rec, uint32_t width, uint32_t height, uint32_t stride
     }
 }
 
-int calCUMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride, int& min, int& max)
+int calCUMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride, int& min, int& max, uint32_t& mode_cout)
 {
     for (int i = 0; i < 256; i++)
         modecount[i] = 0;
@@ -276,8 +276,8 @@ int calCUMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride, int&
         }
         src += stride;
     }
-    uint32_t max_cout = 0;
     int      mode = 0;
+    mode_cout = 0;
 
     for (int i = 0; i < 256; i++)
     {
@@ -299,9 +299,9 @@ int calCUMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride, int&
 
     for (int i = 0; i < 256; i++)
     {
-        if (modecount[i] > max_cout)
+        if (modecount[i] > mode_cout)
         {
-            max_cout = modecount[i];
+            mode_cout = modecount[i];
             mode = i;
         }
     }
