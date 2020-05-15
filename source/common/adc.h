@@ -96,7 +96,7 @@ typedef struct adc_param
     /*Error tolerance 0~255 */
     int       et;
 
-    /*Percent of mode cont to be split 0~100 */
+    /*Percent of mode count to be split 0~100 */
     int       pm;
 
     /* Enable the output the reconstruction frames. Default is disabled */
