@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\source\common\adc_config.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\common\bitstream.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\common\common.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\common\dpb.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\common\files.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\common\frame.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\common\log.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\common\nal.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\common\piclist.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\common\picyuv.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\dec\adcd.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\dec\AnnexBread.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\dec\decoder.cpp" />
+    <ClCompile Include="..\..\..\..\..\source\dec\detropy.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\source\common\adc.h" />
+    <ClInclude Include="..\..\..\..\..\source\common\adc_config.h" />
+    <ClInclude Include="..\..\..\..\..\source\common\bitstream.h" />
+    <ClInclude Include="..\..\..\..\..\source\common\common.h" />
+    <ClInclude Include="..\..\..\..\..\source\common\dpb.h" />
+    <ClInclude Include="..\..\..\..\..\source\common\files.h" />
+    <ClInclude Include="..\..\..\..\..\source\common\frame.h" />
+    <ClInclude Include="..\..\..\..\..\source\common\log.h" />
+    <ClInclude Include="..\..\..\..\..\source\common\nal.h" />
+    <ClInclude Include="..\..\..\..\..\source\common\piclist.h" />
+    <ClInclude Include="..\..\..\..\..\source\common\picyuv.h" />
+    <ClInclude Include="..\..\..\..\..\source\dec\AnnexBread.h" />
+    <ClInclude Include="..\..\..\..\..\source\dec\decoder.h" />
+    <ClInclude Include="..\..\..\..\..\source\dec\detropy.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\third_party\getopt\build\win32\VC12\getopt.vcxproj">
+      <Project>{546488ab-1657-4205-93c6-5d2ebfd7fa36}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{15A85A4C-E675-481F-99E1-088DD8A00E41}</ProjectGuid>
+    <RootNamespace>codec_demo</RootNamespace>
+    <ProjectName>adcd</ProjectName>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\..\source;$(ProjectDir)..\..\..\..\..\source\common;$(ProjectDir)..\..\..\..\..\third_party\getopt\src;$(ProjectDir)..\..\..\..\..\source\enc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;STATIC_GETOPT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\..\source;$(ProjectDir)..\..\..\..\..\source\common;$(ProjectDir)..\..\..\..\..\third_party\getopt\src;$(ProjectDir)..\..\..\..\..\source\enc</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;STATIC_GETOPT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
