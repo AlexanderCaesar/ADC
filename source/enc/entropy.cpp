@@ -582,9 +582,9 @@ Entropy::Entropy()
 void Entropy::lbac_encode_bin(uint32_t bin, lbac_t *lbac, lbac_ctx_model_t *model, Bitstream  *bs)
 {
     uint16_t cmps = (*model) & 1;
-    uint32_t rLPS = ((*model) & PROB_MASK) >> (LG_PMPS_SHIFTNO + 1);
-    uint32_t rMPS = lbac->range - rLPS;
-    int s_flag = rMPS < QUAR_HALF_PROB;
+    uint32_t rLPS = ((*model) & PROB_MASK) >> (LG_PMPS_SHIFTNO + 1);//model & 2047 (0x07FF) >> 3   
+    uint32_t rMPS = lbac->range - rLPS;// 511 0x 01FF
+    int s_flag = rMPS < QUAR_HALF_PROB;// < 256
     rMPS |= 0x100;
 
     if (bin == cmps) { // MPS
@@ -612,6 +612,16 @@ void Entropy::lbac_encode_bin(uint32_t bin, lbac_t *lbac, lbac_ctx_model_t *mode
 
 void Entropy::lbac_finish(lbac_t *lbac, Bitstream  *bs)
 {
+	if (lbac->left_bits == 16)
+	{
+		lbac_ctx_model_t* ctx = &(lbac_enc.h.tail);
+		Bitstream *bs = static_cast<Bitstream*>(m_bitIf);
+		lbac_encode_bin(0, &lbac_enc, ctx, bs);
+		lbac_encode_bin(1, &lbac_enc, ctx, bs);
+		lbac_encode_bin(0, &lbac_enc, ctx, bs);
+		lbac_encode_bin(1, &lbac_enc, ctx, bs);
+	}
+
     if (lbac->code >> (32 - lbac->left_bits)) {
         bs->write(lbac->pending_byte + 1, 8);
         while (lbac->stacked_ff != 0) {

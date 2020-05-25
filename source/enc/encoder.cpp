@@ -138,8 +138,8 @@ void Encoder::printSummary()
     INF("===============================================================================");
 
     INF("  PSNR Y(dB)       : %-5.4f", m_stats.globalPsnrY/m_stats.encodedPictureCount);
-    INF("  PSNR U(dB)       : %-5.4f", m_stats.globalPsnrY / m_stats.encodedPictureCount);
-    INF("  PSNR V(dB)       : %-5.4f", m_stats.globalPsnrY / m_stats.encodedPictureCount);
+    INF("  PSNR U(dB)       : %-5.4f", m_stats.globalPsnrU / m_stats.encodedPictureCount);
+    INF("  PSNR V(dB)       : %-5.4f", m_stats.globalPsnrV / m_stats.encodedPictureCount);
 
     m_stats.elapsedVideoTime = (double)m_stats.encodedPictureCount / (double)m_param.fpsNum;
     INF("  Total bits(bits) : %lld", m_stats.accBits);
