@@ -47,12 +47,15 @@ int ADCConfig::parse_arg(int argc, char* argv[])
         { "et", required_argument, NULL, 'e' },
         { "logfile", required_argument, NULL, 'g' },
         { "pm", required_argument, NULL, 'p' },
+        { "msplitctx", required_argument, NULL, 's' },
+        { "mresctx", required_argument, NULL, 'r' },
+        { "mdirctx", required_argument, NULL, 'd' },
         { 0, 0, 0, 0 }
     };
 
     int opt;
     int option_index = 0;
-    char* optstring = "hl:v:h:i:o:R:l:P:S:f:W:H:t:e:g:p:"; //There must be an ":" in the end of string
+    char* optstring = "hl:v:h:i:o:R:l:P:S:f:W:H:t:e:g:p:s:r:d:"; //There must be an ":" in the end of string
     std::string temp;
 
     while ((opt = getopt_long(argc, argv, optstring, long_options, &option_index)) != -1)
@@ -109,12 +112,21 @@ int ADCConfig::parse_arg(int argc, char* argv[])
         case 'e':
             adc_p.et = atoi(optarg);
             break;
-
         case 'g':
             log_file = optarg;
             break;
         case 'p':
             adc_p.pm = atoi(optarg);
+            break;
+
+        case 's':
+            adc_p.multiSplitCtx = atoi(optarg);
+            break;
+        case 'r':
+            adc_p.multiResCtx = atoi(optarg);
+            break;
+        case 'd':
+            adc_p.multiDirCtx = atoi(optarg);
             break;
         }
     }
@@ -139,5 +151,8 @@ void ADCConfig::display_help()
     printf("  -t, --totalframes <totalframes> Total Number of frames to be encoded\n");
     printf("  -e, --et <et> Error tolerance 0~255\n");
     printf("  -g, --logfile <logfile > logfile\n");
-    printf("  -p, --pm <et > Percent of mode cont to be split 0~100 0~100\n");
+    printf("  -p, --pm <pm> Percent of mode cont to be split 0~100 0~100\n");
+    printf("  -s, --msplitctx <0,1> multiSplitCtx\n");
+    printf("  -r, --mresctx <0,1> multiResCtx\n");
+    printf("  -d, --mdirctx <0,1> multiDirCtx\n");
 }
