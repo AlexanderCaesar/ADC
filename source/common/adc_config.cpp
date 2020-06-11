@@ -23,6 +23,9 @@ ADCConfig::ADCConfig()
     adc_p.totalFrames = 0;
     adc_p.chromaFormat = 1;
     adc_p.pm = 50;
+    adc_p.multiSplitCtx = 0;
+    adc_p.multiResCtx = 0;
+    adc_p.multiDirCtx = 0;
     log_file = "adc.log";
 }
 

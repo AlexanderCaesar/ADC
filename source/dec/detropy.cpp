@@ -565,7 +565,6 @@ int u(uint8_t* data, unsigned bits, int start_bit) {
 
         offset++;
     }
-
     return r;
 }
 
@@ -693,9 +692,16 @@ int Detropy::decodeVPS(adc_param *p, adc_nal *nal)
     int      start_bit = 0;
 
     uint8_t* ptr = m_nal.payload;
-    p->sourceHeight = ue(ptr, start_bit);
     p->sourceWidth = ue(ptr, start_bit);
-    p->chromaFormat = ue(ptr, start_bit);
+    p->sourceHeight = ue(ptr, start_bit);
+    p->chromaFormat = u(ptr, 1,start_bit);
+    start_bit++;
+    p->multiSplitCtx = u(ptr,1,start_bit);
+    start_bit++;
+    p->multiResCtx = u(ptr,1,start_bit);
+    start_bit++;
+    p->multiDirCtx = u(ptr,1,start_bit);
+    start_bit++;
 
     INF("\nwidth %3d   height %3d    chromaformat %d\n",
         p->sourceWidth, p->sourceHeight, p->chromaFormat);
@@ -727,18 +733,18 @@ void Detropy::com_lbac_ctx_init()
 
 uint8_t Detropy::decode_split_flag()
 {
-    return lbac_dec_bin(&lbac_dec, &(lbac_dec.ctx.part_split_flag));
+    return lbac_dec_bin(&lbac_dec, &(lbac_dec.ctx.part_split_flag[0]));
 }
 
 uint8_t Detropy::decode_direction_flag()
 {
-    return lbac_dec_bin(&lbac_dec, &(lbac_dec.ctx.dir_flag));
+    return lbac_dec_bin(&lbac_dec, &(lbac_dec.ctx.dir_flag[0]));
 }
 
 int32_t Detropy::decode_res()
 {
     lbac_ctx_model_t* sin_ctx = &(lbac_dec.ctx.sign_flag);
-    lbac_ctx_model_t* res_ctx = &(lbac_dec.ctx.res);
+    lbac_ctx_model_t* res_ctx = &(lbac_dec.ctx.res[0]);
 
     uint8_t bin = 0;
     int32_t count = 0;

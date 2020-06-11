@@ -102,7 +102,13 @@ typedef struct adc_param
     /* Enable the output the reconstruction frames. Default is disabled */
     int       bRec;
 
-    int       chromaFormat;    
+    int       chromaFormat;
+
+    int       multiSplitCtx;
+
+    int       multiResCtx;
+
+    int       multiDirCtx;
 
 } adc_param;
 

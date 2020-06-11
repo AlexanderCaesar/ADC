@@ -45,7 +45,7 @@ typedef struct uavs3e_com_lbac_all_ctx_t {
     lbac_ctx_model_t   dir_flag[DIR_FLAG_CTX];
     lbac_ctx_model_t   sign_flag;
     lbac_ctx_model_t   res[RES_CTX];
-	lbac_ctx_model_t   tail;
+    lbac_ctx_model_t   tail;
 } com_lbac_all_ctx_t;
 
 typedef const int16_t tab_s16;

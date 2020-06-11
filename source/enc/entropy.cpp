@@ -671,9 +671,12 @@ void Entropy::lbac_reset()
 }
 void Entropy::codeVPS(adc_param *p)
 {
-    WRITE_UVLC(p->sourceHeight, "pic_width_in_luma_samples");
-    WRITE_UVLC(p->sourceWidth,  "pic_height_in_luma_samples");
-    WRITE_UVLC(p->chromaFormat, "chroma_format_idc");
+    WRITE_UVLC(p->sourceWidth,  "pic_width_in_luma_samples");
+    WRITE_UVLC(p->sourceHeight, "pic_height_in_luma_samples");
+    WRITE_FLAG(p->chromaFormat, "chroma_format_idc");
+    WRITE_FLAG(p->multiSplitCtx, "multi_split_ctx");
+    WRITE_FLAG(p->multiResCtx,   "multi_res_ctx");
+    WRITE_FLAG(p->multiDirCtx,   "multi_dir_ctx");
 }
 
 void Entropy::codeSplit(uint32_t width, uint32_t height,uint32_t val)
@@ -701,7 +704,7 @@ void Entropy::codeSplit(uint32_t width, uint32_t height,uint32_t val)
 		ctx_id = 4;
 	}
 
-    lbac_ctx_model_t* ctx = &(lbac_enc.h.part_split_flag[ctx_id]);
+    lbac_ctx_model_t* ctx = &(lbac_enc.h.part_split_flag[0]);
     Bitstream *bs = static_cast<Bitstream*>(m_bitIf);
     lbac_encode_bin(val, &lbac_enc, ctx, bs);
 }
@@ -722,7 +725,7 @@ void Entropy::codeDirection(uint32_t width, uint32_t height, uint32_t val)
 	{
 		ctx_id = 2;
 	}
-    lbac_ctx_model_t* ctx = &(lbac_enc.h.dir_flag[ctx_id]);
+    lbac_ctx_model_t* ctx = &(lbac_enc.h.dir_flag[0]);
     Bitstream *bs = static_cast<Bitstream*>(m_bitIf);
     lbac_encode_bin(val, &lbac_enc, ctx, bs);
 }
@@ -752,7 +755,7 @@ void Entropy::codeRes(uint32_t width, uint32_t height, int32_t val)
 		ctx_id = 4;
 	}
     lbac_ctx_model_t* sin_ctx = &(lbac_enc.h.sign_flag);
-    lbac_ctx_model_t* res_ctx = &(lbac_enc.h.res[ctx_id]);
+    lbac_ctx_model_t* res_ctx = &(lbac_enc.h.res[0]);
     Bitstream *bs = static_cast<Bitstream*>(m_bitIf);
     uint32_t v = abs(val);
 
