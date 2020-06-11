@@ -46,7 +46,7 @@ public:
     void lbac_finish(lbac_t *lbac, Bitstream  *bs);
 
     void codeVPS(adc_param *p);
-    void codeSplit(uint32_t val);
-    void codeDirection(uint32_t val);
-    void codeRes(int32_t val);
+    void codeSplit(uint32_t width, uint32_t height,uint32_t val);
+    void codeDirection(uint32_t width, uint32_t height, uint32_t val);
+    void codeRes(uint32_t width, uint32_t height, int32_t val);
 };

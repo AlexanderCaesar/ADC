@@ -35,12 +35,16 @@ typedef uint8_t  pixel;
 
 typedef int16_t lbac_ctx_model_t;
 
+#define PART_SPLIT_FLAG_CTX 5
+#define RES_CTX             5
+#define DIR_FLAG_CTX        3
+
 /* context models for arithemetic coding */
 typedef struct uavs3e_com_lbac_all_ctx_t {
-    lbac_ctx_model_t   part_split_flag;
-    lbac_ctx_model_t   dir_flag;
+    lbac_ctx_model_t   part_split_flag[PART_SPLIT_FLAG_CTX];
+    lbac_ctx_model_t   dir_flag[DIR_FLAG_CTX];
     lbac_ctx_model_t   sign_flag;
-    lbac_ctx_model_t   res;
+    lbac_ctx_model_t   res[RES_CTX];
 	lbac_ctx_model_t   tail;
 } com_lbac_all_ctx_t;
 
@@ -51,7 +55,6 @@ const char* GetOsVersion();
 int64_t time_mdate();
 
 /*The mode is that value that is repeated most often in the data set.*/
-pixel calBoderMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride);
 int   calCUMode(pixel *src, uint32_t width, uint32_t height, uint32_t stride, int& min, int& max, uint32_t& mode_cout);
 int   calBoderMode(pixel *src, uint32_t X, uint32_t Y, uint32_t width, uint32_t height, uint32_t stride);
 int   calDirection(pixel *rec, int mode, uint32_t width, uint32_t height, uint32_t stride, uint32_t& direction);
