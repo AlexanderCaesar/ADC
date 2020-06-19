@@ -175,7 +175,7 @@ int         adc_decoder_headers(adc_decoder* dec, adc_nal *nal);
 int         adc_decoder_decode(adc_decoder* dec, adc_nal *nal, adc_picture *pic_out);
 
 
-#define ADC_BUILD "1.0.2"
+#define ADC_BUILD "1.0.3"
 
 #ifdef __cplusplus
 }

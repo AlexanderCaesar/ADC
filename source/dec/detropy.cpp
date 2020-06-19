@@ -651,8 +651,13 @@ Detropy::Detropy()
     m_nal.type = 0;
     m_nal.payload = NULL;
     m_nal.sizeBytes = 0;
+    m_param = NULL;
 }
 
+void Detropy::setParam(adc_param  *param)
+{
+    m_param = param;
+}
 void Detropy::convertPayloadToRBSP(uint8_t* src, int src_len)
 {
     int zeroCount = 0;
@@ -731,20 +736,88 @@ void Detropy::com_lbac_ctx_init()
     }
 }
 
-uint8_t Detropy::decode_split_flag()
+uint8_t Detropy::decode_split_flag(uint32_t width, uint32_t height)
 {
-    return lbac_dec_bin(&lbac_dec, &(lbac_dec.ctx.part_split_flag[0]));
+    int ctx_id = 0;
+
+    if (m_param->multiSplitCtx)
+    {
+        if (width + height <= 3)
+        {
+            ctx_id = 0;
+        }
+        else if (width + height <= 5)
+        {
+            ctx_id = 1;
+        }
+        else if (width + height <= 9)
+        {
+            ctx_id = 2;
+        }
+        else if (width + height <= 30)
+        {
+            ctx_id = 3;
+        }
+        else
+        {
+            ctx_id = 4;
+        }
+    }
+    return lbac_dec_bin(&lbac_dec, &(lbac_dec.ctx.part_split_flag[ctx_id]));
 }
 
-uint8_t Detropy::decode_direction_flag()
+uint8_t Detropy::decode_direction_flag(uint32_t width, uint32_t height)
 {
-    return lbac_dec_bin(&lbac_dec, &(lbac_dec.ctx.dir_flag[0]));
+    int ctx_id = 0;
+
+    if (m_param->multiDirCtx)
+    {
+        if (width + height <= 2)
+        {
+            ctx_id = 0;
+        }
+        else if (width + height <= 3)
+        {
+            ctx_id = 1;
+        }
+        else
+        {
+            ctx_id = 2;
+        }
+    }
+    return lbac_dec_bin(&lbac_dec, &(lbac_dec.ctx.dir_flag[ctx_id]));
 }
 
-int32_t Detropy::decode_res()
+int32_t Detropy::decode_res(uint32_t width, uint32_t height)
 {
+    int ctx_id = 0;
+
+    if (m_param->multiResCtx)
+    {
+        if (width + height <= 2)
+        {
+            ctx_id = 0;
+        }
+        else if (width + height <= 4)
+        {
+            ctx_id = 1;
+        }
+        else if (width + height <= 9)
+        {
+            ctx_id = 2;
+        }
+        else if (width + height <= 30)
+        {
+            ctx_id = 3;
+        }
+        else
+        {
+            ctx_id = 4;
+        }
+    }
+
     lbac_ctx_model_t* sin_ctx = &(lbac_dec.ctx.sign_flag);
-    lbac_ctx_model_t* res_ctx = &(lbac_dec.ctx.res[0]);
+    lbac_ctx_model_t* res_ctx = &(lbac_dec.ctx.res[ctx_id]);
 
     uint8_t bin = 0;
     int32_t count = 0;

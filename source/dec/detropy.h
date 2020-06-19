@@ -37,6 +37,7 @@ public:
     adc_nal        m_nal;
     com_lbac_t     lbac_dec;
     int            m_occupancy;
+    adc_param      *m_param;
 
     Detropy();
     ~Detropy()
@@ -47,14 +48,16 @@ public:
             m_nal.payload = NULL;
         }
     }
+
+    void setParam(adc_param  *param);
     void convertPayloadToRBSP(uint8_t* src, int src_len);
     int  decodeVPS(adc_param *p, adc_nal *nal);
 
     void lbac_dec_init(uint8_t *cur, uint8_t* end);
     void com_lbac_ctx_init();
 
-    uint8_t decode_split_flag();
-    uint8_t decode_direction_flag();
-    int32_t decode_res();
+    uint8_t decode_split_flag(uint32_t width, uint32_t height);
+    uint8_t decode_direction_flag(uint32_t width, uint32_t height);
+    int32_t decode_res(uint32_t width, uint32_t height);
 
 };

@@ -576,7 +576,13 @@ static int get_shift(int v)
 
 Entropy::Entropy()
 {
+    m_param = NULL;
     lbac_reset();
+}
+
+void Entropy::setParams(adc_param *param)
+{
+    m_param = param;
 }
 
 void Entropy::lbac_encode_bin(uint32_t bin, lbac_t *lbac, lbac_ctx_model_t *model, Bitstream  *bs)
@@ -683,28 +689,30 @@ void Entropy::codeSplit(uint32_t width, uint32_t height,uint32_t val)
 {
 	int ctx_id = 0;
 
-	if (width + height <= 3)
-	{
-		ctx_id = 0;
-	}
-	else if (width + height <= 5)
-	{
-		ctx_id = 1;
-	}
-	else if (width + height <= 9)
-	{
-		ctx_id = 2;
-	}
-	else if (width + height <= 30)
-	{
-		ctx_id = 3;
-	}
-	else
-	{
-		ctx_id = 4;
-	}
-
-    lbac_ctx_model_t* ctx = &(lbac_enc.h.part_split_flag[0]);
+    if (m_param->multiSplitCtx)
+    {
+        if (width + height <= 3)
+        {
+            ctx_id = 0;
+        }
+        else if (width + height <= 5)
+        {
+            ctx_id = 1;
+        }
+        else if (width + height <= 9)
+        {
+            ctx_id = 2;
+        }
+        else if (width + height <= 30)
+        {
+            ctx_id = 3;
+        }
+        else
+        {
+            ctx_id = 4;
+        }
+    }
+    lbac_ctx_model_t* ctx = &(lbac_enc.h.part_split_flag[ctx_id]);
     Bitstream *bs = static_cast<Bitstream*>(m_bitIf);
     lbac_encode_bin(val, &lbac_enc, ctx, bs);
 }
@@ -713,19 +721,23 @@ void Entropy::codeDirection(uint32_t width, uint32_t height, uint32_t val)
 {
 	int ctx_id = 0;
 
-	if (width + height <= 2)
-	{
-		ctx_id = 0;
-	}
-	else if (width + height <= 3)
-	{
-		ctx_id = 1;
-	}
-	else
-	{
-		ctx_id = 2;
-	}
-    lbac_ctx_model_t* ctx = &(lbac_enc.h.dir_flag[0]);
+    if (m_param->multiDirCtx)
+    {
+        if (width + height <= 2)
+        {
+            ctx_id = 0;
+        }
+        else if (width + height <= 3)
+        {
+            ctx_id = 1;
+        }
+        else
+        {
+            ctx_id = 2;
+        }
+    }
+
+    lbac_ctx_model_t* ctx = &(lbac_enc.h.dir_flag[ctx_id]);
     Bitstream *bs = static_cast<Bitstream*>(m_bitIf);
     lbac_encode_bin(val, &lbac_enc, ctx, bs);
 }
@@ -734,28 +746,32 @@ void Entropy::codeRes(uint32_t width, uint32_t height, int32_t val)
 {
 	int ctx_id = 0;
 
-	if (width + height <= 2)
-	{
-		ctx_id = 0;
-	}
-	else if (width + height <= 4)
-	{
-		ctx_id = 1;
-	}
-	else if (width + height <= 9)
-	{
-		ctx_id = 2;
-	}
-	else if (width + height <= 30)
-	{
-		ctx_id = 3;
-	}
-	else
-	{
-		ctx_id = 4;
-	}
+    if (m_param->multiResCtx)
+    {
+        if (width + height <= 2)
+        {
+            ctx_id = 0;
+        }
+        else if (width + height <= 4)
+        {
+            ctx_id = 1;
+        }
+        else if (width + height <= 9)
+        {
+            ctx_id = 2;
+        }
+        else if (width + height <= 30)
+        {
+            ctx_id = 3;
+        }
+        else
+        {
+            ctx_id = 4;
+        }
+    }
+
     lbac_ctx_model_t* sin_ctx = &(lbac_enc.h.sign_flag);
-    lbac_ctx_model_t* res_ctx = &(lbac_enc.h.res[0]);
+    lbac_ctx_model_t* res_ctx = &(lbac_enc.h.res[ctx_id]);
     Bitstream *bs = static_cast<Bitstream*>(m_bitIf);
     uint32_t v = abs(val);
 

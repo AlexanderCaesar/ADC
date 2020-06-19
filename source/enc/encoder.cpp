@@ -68,6 +68,8 @@ int adc_encoder_headers(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal)
 
         Entropy entropy;
 
+        entropy.setParams(&encoder->m_param);
+
         encoder->getStreamHeaders(encoder->m_nalList, entropy);
         *pp_nal = &encoder->m_nalList.m_nal[0];
         if (pi_nal) *pi_nal = encoder->m_nalList.m_numNal;
@@ -92,6 +94,8 @@ int adc_encoder_encode(adc_encoder *enc, adc_nal **pp_nal, uint32_t *pi_nal, adc
     Encoder *encoder = static_cast<Encoder*>(enc);
 
     Entropy entropy;
+
+    entropy.setParams(&encoder->m_param);
 
     int numEncoded = encoder->encode(pic_in, pic_out, entropy);
 

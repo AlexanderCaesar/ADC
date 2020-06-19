@@ -93,6 +93,7 @@ void Decoder::printSummary()
 
 int Decoder::decodeVPS(adc_nal *nal)
 {
+    m_detropy.setParam(&m_param);
     return m_detropy.decodeVPS(&m_param,nal);
 }
 
@@ -112,7 +113,7 @@ int Decoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
     if ((width + height) > 2)
     {
         curFrame->m_partition[yuv][curFrame->m_part_len[yuv]++] = split;
-        split = m_detropy.decode_split_flag();
+        split = m_detropy.decode_split_flag(width,height);
     }
 
     if (!split)
@@ -124,12 +125,12 @@ int Decoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
         uint32_t direction = 0;
         if (ref_mode < 0)
         {
-            direction = m_detropy.decode_direction_flag();
+            direction = m_detropy.decode_direction_flag(width, height);
             ref_mode = getDirectionRef(rec,width, height, curFrame->m_fencPic->m_stride[yuv], direction);
             curFrame->m_direction[yuv][curFrame->m_dir_len[yuv]++] = direction;
         }
 
-        int32_t res = m_detropy.decode_res();
+        int32_t res = m_detropy.decode_res(width, height);
         curFrame->m_residual[yuv][curFrame->m_res_len[yuv]++] = res;
         int32_t mode = res + ref_mode;
         curFrame->m_reconPic->copyModePixel(X, Y, width, height, yuv, mode);

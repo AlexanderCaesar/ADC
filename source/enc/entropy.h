@@ -34,10 +34,12 @@ class Entropy : public SyntaxElementWriter
 {
 public:
 
+    adc_param   *m_param;
     lbac_t lbac_enc;
 
     Entropy();
 
+    void setParams(adc_param *param);
     void com_lbac_ctx_init(com_lbac_all_ctx_t *lbac_ctx);
     void lbac_reset();
     void setBitstream(Bitstream* p)    { m_bitIf = p; }
