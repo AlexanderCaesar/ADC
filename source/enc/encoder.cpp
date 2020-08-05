@@ -195,7 +195,7 @@ int Encoder::quadtree(Frame* curFrame, uint32_t X, uint32_t Y, uint32_t width, u
 
     double pm = m_param.pm / 100.0;
     double percent = (double)mode_cout / (double)(width*height);
-    if (!split && percent < pm)
+    if (!split &&  (width*height>80) && (percent < pm))
     {
         split = 1;
     }
